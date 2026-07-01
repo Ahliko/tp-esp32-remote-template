@@ -22,6 +22,16 @@ bool IHM::init() {
     return true;
 }
 
+void IHM::update(float &voltage, float &current, float &temp) {
+    AppConfig cfg = m_bleManager->getConfig();
+    if (cfg.isUpdated) {
+        m_config.temp_limit_high = m_bleManager->getConfig().config.temp_limit_high;
+        m_bleManager->clearUpdateFlag();
+    }
+    checkValues(voltage, current, temp);
+    m_bleManager->updateTelemetry(current, temp, temp, 0);
+}
+
 void IHM::checkValues(float &voltage, float &current, float &temp) {
     if (m_config.voltage_limit_low > voltage || voltage > m_config.voltage_limit_high) {
         Serial.println("ALERT on Voltage");
@@ -41,15 +51,7 @@ void IHM::checkValues(float &voltage, float &current, float &temp) {
         displayAlert();
         return;
     }
-    Serial.printf("low : %f, high : %f, temp : %f\n", m_config.temp_limit_low, m_config.temp_limit_high, temp);
-    Serial.println("NO Alert");
     displayAndSendValues();
-    AppConfig cfg = m_bleManager->getConfig();
-    if (cfg.isUpdated) {
-        m_config.temp_limit_high = m_bleManager->getConfig().config.temp_limit_high;
-        m_bleManager->clearUpdateFlag();
-    }
-    m_bleManager->updateTelemetry(current, temp, temp, 0);
 }
 
 void IHM::displayAndSendValues() {

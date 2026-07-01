@@ -92,13 +92,31 @@ void BLEManager::onDisconnect(NimBLEServer* pServer) {
     NimBLEDevice::startAdvertising(); // Relance l'advertising pour reconnexion
 }
 
+std::string uint8ToHex(uint8_t value) {
+    char buffer[3]; // 2 caractères pour l'hexa + 1 pour le caractère de fin de chaîne '\0'
+    snprintf(buffer, sizeof(buffer), "%02X", value);
+    return std::string(buffer);
+}
+
+std::string arrayToHex(const uint8_t* data, size_t length) {
+    std::string result;
+    result.reserve(length * 2); // Optimisation mémoire
+
+    char buffer[3];
+    for (size_t i = 0; i < length; i++) {
+        snprintf(buffer, sizeof(buffer), "%02X", data[i]);
+        result += buffer;
+    }
+
+    return result;
+}
+
 void BLEManager::onWrite(NimBLECharacteristic* pCharacteristic) {
     std::string uuid = pCharacteristic->getUUID().toString();
 
     // Récupération de la donnée brute et cast en float
     if (pCharacteristic->getDataLength() == sizeof(float)) {
-        float newValue = *(float*)pCharacteristic->getValue().data(); // TODO : A patch la conversion little endian
-        // Serial.println(std::to_string(pCharacteristic->getValue().data()));
+        float newValue = *(float*)pCharacteristic->getValue().data();
 
         if (uuid == CHAR_CFG_MAX_CURRENT_UUID) {
             _currentConfig.config.current_limit_high = newValue;

@@ -15,8 +15,9 @@ public:
     ~IHM() = default;
 
     bool init();
-    void checkValues(float &voltage, float &current, float &temp);
+    void update(float &voltage, float &current, float &temp);
 private:
+    void checkValues(float &voltage, float &current, float &temp);
     void displayAndSendValues();
     void displayAlert();
 

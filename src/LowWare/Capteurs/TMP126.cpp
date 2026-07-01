@@ -28,7 +28,6 @@ bool TMP126::init() const {
 
     const uint16_t id = readDeviceId();
     // L'ID peut varier selon les révisions ; on vérifie au moins bits[15:4]
-    Serial.println(id);
     return id != 0x0000 && id != 0xFFFF;
 }
 
