@@ -25,7 +25,4 @@ void Sensors::checkSensors(float &voltage, float &current, float &temp) {
     Serial.println(voltage);
     Serial.println(current);
     Serial.println(temp);
-    voltage = 8.0;
-    current = 3.0;
-    temp = 20.0;
 }

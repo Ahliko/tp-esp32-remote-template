@@ -13,28 +13,29 @@ IHM::IHM() {
     m_bleManager = new BLEManager();
 }
 
-bool IHM::init() const {
+bool IHM::init(LimitConfig *config) {
     m_buzzer->init();
     m_green_led->init();
     m_red_led->init();
+    m_config = config;
     m_bleManager->init(BLE_DEVICE_NAME);
     return true;
 }
 
 void IHM::checkValues(float &voltage, float &current, float &temp) {
-    if (VOLTAGE_LIMIT_LOW > voltage || voltage > VOLTAGE_LIMIT_HIGH) {
+    if (m_config->voltage_limit_low > voltage || voltage > m_config->voltage_limit_high) {
         Serial.println("ALERT on Voltage");
         displayAlert();
         return;
     }
 
-    if (CURRENT_LIMIT_LOW > current || current > CURRENT_LIMIT_HIGH) {
+    if (m_config->current_limit_low > current || current > m_config->current_limit_high) {
         Serial.println("ALERT on Current");
         displayAlert();
         return;
     }
 
-    if (TEMP_LIMIT_LOW > temp || temp > TEMP_LIMIT_HIGH) {
+    if (m_config->temp_limit_low > temp || temp > m_config->temp_limit_high) {
         Serial.println("ALERT on Temp");
         displayAlert();
         return;
@@ -45,6 +46,7 @@ void IHM::checkValues(float &voltage, float &current, float &temp) {
     if (cfg.isUpdated) {
         m_bleManager->clearUpdateFlag();
     }
+    m_bleManager->updateTelemetry(current, voltage, temp, 0);
 }
 
 void IHM::displayAndSendValues() const {

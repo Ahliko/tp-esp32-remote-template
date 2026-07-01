@@ -14,7 +14,7 @@ public:
     explicit IHM(); //BLEManager &ble, RAMManager &ram
     ~IHM() = default;
 
-    bool init() const;
+    bool init(LimitConfig *config);
     void checkValues(float &voltage, float &current, float &temp);
 private:
     void displayAndSendValues() const;
@@ -29,6 +29,7 @@ private:
     LED *m_red_led;
     LED *m_green_led;
     BLEManager *m_bleManager;
+    LimitConfig *m_config;
 };
 
 

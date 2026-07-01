@@ -43,6 +43,8 @@ void BLEManager::init(const std::string& deviceName) {
 }
 
 void BLEManager::updateTelemetry(float current, float pcbTemp, float ambTemp, uint32_t alarmStatus) {
+    Serial.println("telemetry");
+    Serial.println(ambTemp);
     setFloatValue(_charCurrent, current);
     setFloatValue(_charPcbTemp, pcbTemp);
     setFloatValue(_charAmbTemp, ambTemp);
