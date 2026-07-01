@@ -1,10 +1,12 @@
 #include <Arduino.h>
 
+#include "LowWare/BLE/BluetoothManager.h"
 #include "MiddleWare/IHM.h"
 #include "MiddleWare/Sensors.h"
 
 Sensors sensors;
 IHM ihm;
+BLEManager bleManager;
 
 float voltage;
 float current;

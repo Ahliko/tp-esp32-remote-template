@@ -19,12 +19,16 @@ TMP126::~TMP126() {
 bool TMP126::init() const {
     pinMode(_csPin, OUTPUT);
     digitalWrite(_csPin, HIGH);
-
-    _spi->begin();
+    if (_spi == nullptr) {
+        Serial.println("spi nullptr");
+        return false;
+    }
+    _spi->begin(18, 19, 23, -1);
     delay(2); // attente POR (tINITIATION ≥ 0.5 ms)
 
     const uint16_t id = readDeviceId();
     // L'ID peut varier selon les révisions ; on vérifie au moins bits[15:4]
+    Serial.println(id);
     return id != 0x0000 && id != 0xFFFF;
 }
 
@@ -159,12 +163,12 @@ float TMP126::readOneShotBlocking(const uint32_t timeoutMs) const {
 uint16_t TMP126::readReg(const uint8_t reg) const {
     const uint16_t cmd = _buildCmd(reg, true);
 
-    _spi->beginTransaction(_spiSettings);
     _csLow();
+    _spi->beginTransaction(_spiSettings);
     _transfer16(cmd); // envoi command word, dummy data reçu
     const uint16_t data = _transfer16(0x0000); // clock out data word
-    _csHigh();
     _spi->endTransaction();
+    _csHigh();
 
     return data;
 }
@@ -172,12 +176,12 @@ uint16_t TMP126::readReg(const uint8_t reg) const {
 void TMP126::writeReg(const uint8_t reg, const uint16_t value) const {
     const uint16_t cmd = _buildCmd(reg, false);
 
-    _spi->beginTransaction(_spiSettings);
     _csLow();
+    _spi->beginTransaction(_spiSettings);
     _transfer16(cmd); // command word
     _transfer16(value); // data word
-    _csHigh();
     _spi->endTransaction();
+    _csHigh();
 }
 
 // ─────────────────────────────────────────────────────────────────────────────

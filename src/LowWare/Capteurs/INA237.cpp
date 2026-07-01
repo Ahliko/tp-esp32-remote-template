@@ -7,7 +7,6 @@
 //  Constantes internes
 // ─────────────────────────────────────────────────────────────────────────────
 static constexpr uint16_t MANUFACTURER_ID_EXPECTED = 0x5449; // 'TI'
-static constexpr uint16_t DEVICE_ID_EXPECTED = 0x2370;
 
 // Bits CONFIG (reg 0x00)
 static constexpr uint16_t CONFIG_RST_BIT = 1u << 15;
@@ -15,7 +14,7 @@ static constexpr uint16_t CONFIG_ADCRANGE_BIT = 1u << 4;
 
 static constexpr uint16_t DIAG_CNVRF = 1u << 1;
 
-INA237::INA237() { _wire = new TwoWire(INAADDR); }
+INA237::INA237() { _wire = new TwoWire(0); }
 
 INA237::~INA237() {
     delete _wire;
@@ -24,12 +23,13 @@ INA237::~INA237() {
 bool INA237::init(const ADCRange range) {
     _shuntOhms = ShuntOhms;
     _range = range;
+    _wire->begin(21, 22);
 
     // Vérification de l'ID fabricant
-    if (readManufacturerId() != MANUFACTURER_ID_EXPECTED)
+    if (readManufacturerId() != MANUFACTURER_ID_EXPECTED) {
+        Serial.println(F("INA237: manuf id  not correct"));
         return false;
-    if (readDeviceId() >> 4 != DEVICE_ID_EXPECTED >> 4)
-        return false;
+    }
 
     reset();
     delay(2); // attente stabilisation
@@ -133,7 +133,6 @@ bool INA237::isConversionReady() const { return (readReg(0x0F) & DIAG_CNVRF) != 
 
 uint16_t INA237::readManufacturerId() const { return readReg(INA237Reg::MANUFACTURER_ID); }
 
-uint16_t INA237::readDeviceId() const { return readReg(INA237Reg::DEVICE_ID); }
 
 // ── Privé ────────────────────────────────────────────────────────────────────
 

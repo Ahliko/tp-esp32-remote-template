@@ -48,7 +48,7 @@ namespace TMP126Reg {
     constexpr uint8_t HYSTERESIS = 0x06; ///< Hystérésis
     constexpr uint8_t SLEW_LIMIT = 0x07; ///< Limite slew rate
     constexpr uint8_t ALERT_ENABLE = 0x08; ///< Activation des alertes
-    constexpr uint8_t DEVICE_ID = 0x0F; ///< ID device (RO)
+    constexpr uint8_t DEVICE_ID = 0x0C; ///< ID device (RO)
 } // namespace TMP126Reg
 
 // ─────────────────────────────────────────────

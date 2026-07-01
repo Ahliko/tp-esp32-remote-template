@@ -4,12 +4,10 @@
 
 #ifndef TP_ESP32_REMOTE_TEMPLATE_IHM_H
 #define TP_ESP32_REMOTE_TEMPLATE_IHM_H
+#include "Config/config.h"
+#include "LowWare/BLE/BluetoothManager.h"
 #include "LowWare/IHM/Buzzer.h"
 #include "LowWare/IHM/LED.h"
-#include "Config/config.h"
-
-
-
 
 class IHM {
 public:
@@ -30,6 +28,7 @@ private:
     Buzzer *m_buzzer;
     LED *m_red_led;
     LED *m_green_led;
+    BLEManager *m_bleManager;
 };
 
 

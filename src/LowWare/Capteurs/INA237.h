@@ -38,7 +38,6 @@ namespace INA237Reg {
     constexpr uint8_t DIAG_ALRT = 0x0B + 4; // 0x0F
     constexpr uint8_t SOVL_REG = 0x09;
     constexpr uint8_t MANUFACTURER_ID = 0x3E;
-    constexpr uint8_t DEVICE_ID = 0x3F;
 } // namespace INA237Reg
 
 // ─────────────────────────────────────────────
@@ -150,7 +149,6 @@ public:
 
     // ── Identifiants ─────────────────────────
     uint16_t readManufacturerId() const; ///< Doit retourner 0x5449 ('TI')
-    uint16_t readDeviceId() const; ///< Doit retourner 0x2370 (INA237)
 
     /** Vrai si une conversion est prête (polling CNVRF) */
     bool isConversionReady() const;

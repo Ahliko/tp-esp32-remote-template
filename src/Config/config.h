@@ -16,6 +16,8 @@
 #define ShuntOhms 500.0
 #define MaxCurrentA 30.0
 
+#define BLE_DEVICE_NAME "ESP32"
+
 #define VOLTAGE_LIMIT_LOW 2
 #define VOLTAGE_LIMIT_HIGH 30
 #define CURRENT_LIMIT_LOW 2
