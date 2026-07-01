@@ -28,10 +28,10 @@
 struct LimitConfig {
     float voltage_limit_low = VOLTAGE_LIMIT_LOW;
     float voltage_limit_high = VOLTAGE_LIMIT_HIGH;
-    float current_limit_low = VOLTAGE_LIMIT_LOW;
-    float current_limit_high = VOLTAGE_LIMIT_HIGH;
-    float temp_limit_low = VOLTAGE_LIMIT_LOW;
-    float temp_limit_high = VOLTAGE_LIMIT_HIGH;
+    float current_limit_low = CURRENT_LIMIT_LOW;
+    float current_limit_high = CURRENT_LIMIT_HIGH;
+    float temp_limit_low = TEMP_LIMIT_LOW;
+    float temp_limit_high = TEMP_LIMIT_HIGH;
 };
 
 

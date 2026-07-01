@@ -2,7 +2,7 @@
 
 BLEManager::BLEManager() : _server(nullptr), _isConnected(false) {
     // Valeurs par défaut au démarrage
-    _currentConfig = { 30.0f, 85.0f, false };
+    _currentConfig = { LimitConfig(), false };
 }
 
 void BLEManager::init(const std::string& deviceName) {
@@ -30,8 +30,8 @@ void BLEManager::init(const std::string& deviceName) {
     _charCfgMaxTemp->setCallbacks(this);
 
     // Initialisation des valeurs par défaut dans les caractéristiques
-    setFloatValue(_charCfgMaxCurrent, _currentConfig.maxCurrentLimit);
-    setFloatValue(_charCfgMaxTemp, _currentConfig.maxTempLimit);
+    setFloatValue(_charCfgMaxCurrent, _currentConfig.config.current_limit_high);
+    setFloatValue(_charCfgMaxTemp, _currentConfig.config.temp_limit_high);
 
     pService->start();
 
@@ -97,14 +97,14 @@ void BLEManager::onWrite(NimBLECharacteristic* pCharacteristic) {
 
     // Récupération de la donnée brute et cast en float
     if (pCharacteristic->getDataLength() == sizeof(float)) {
-        float newValue = *(float*)pCharacteristic->getValue().data();
+        float newValue = *(float*)pCharacteristic->getValue().data(); // TODO : A patch la conversion little endian
+        // Serial.println(std::to_string(pCharacteristic->getValue().data()));
 
         if (uuid == CHAR_CFG_MAX_CURRENT_UUID) {
-            _currentConfig.maxCurrentLimit = newValue;
+            _currentConfig.config.current_limit_high = newValue;
             _currentConfig.isUpdated = true;
-        }
-        else if (uuid == CHAR_CFG_MAX_TEMP_UUID) {
-            _currentConfig.maxTempLimit = newValue;
+        } else if (uuid == CHAR_CFG_MAX_TEMP_UUID) {
+            _currentConfig.config.temp_limit_high = newValue;
             _currentConfig.isUpdated = true;
         }
     }

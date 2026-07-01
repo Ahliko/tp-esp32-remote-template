@@ -7,20 +7,18 @@
 Sensors sensors;
 IHM ihm;
 BLEManager bleManager;
-LimitConfig config;
 
 float voltage;
 float current;
 float temp;
 
 void setup() {
-    config = LimitConfig();
     Serial.begin(115200);
     delay(1000);
     Serial.println("BOOT OK");
 
     if (!sensors.init()) return;
-    (void) ihm.init(config);
+    (void) ihm.init();
 }
 
 void loop() {
