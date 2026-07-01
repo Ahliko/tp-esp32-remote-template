@@ -24,7 +24,7 @@ void BLEManager::init(const std::string& deviceName) {
 
     // --- Instanciation des caractéristiques de Configuration ---
     _charCfgMaxCurrent = pService->createCharacteristic(CHAR_CFG_MAX_CURRENT_UUID, NIMBLE_PROPERTY::READ | NIMBLE_PROPERTY::WRITE);
-    _charCfgMaxTemp    = pService->createCharacteristic(CHAR_CFG_MAX_TEMP_UUID, NIMBLE_PROPERTY::READ | NIMBLE_PROPERTY::WRITE);
+    _charCfgMaxTemp    = pService->createCharacteristic(CHAR_CFG_MAX_TEMP_UUID, NIMBLE_PROPERTY::READ | NIMBLE_PROPERTY::WRITE); // TODO : ajouter un param pour la temp ambiante
 
     // Assigner les callbacks d'écriture pour la config
     _charCfgMaxCurrent->setCallbacks(this);
