@@ -4,8 +4,33 @@
 
 #ifndef TP_ESP32_REMOTE_TEMPLATE_IHM_H
 #define TP_ESP32_REMOTE_TEMPLATE_IHM_H
+#include "LowWare/IHM/Buzzer.h"
+#include "LowWare/IHM/LED.h"
+#include "Config/config.h"
 
-class IHM {};
+
+
+
+class IHM {
+public:
+    explicit IHM(); //BLEManager &ble, RAMManager &ram
+    ~IHM() = default;
+
+    bool init() const;
+    void checkValues(float &voltage, float &current, float &temp);
+private:
+    void displayAndSendValues() const;
+    void displayAlert() const;
+
+    void ledGreenOn() const;
+    void ledRedOn() const;
+    void ledGreenOff() const;
+    void ledRedOff() const;
+
+    Buzzer *m_buzzer;
+    LED *m_red_led;
+    LED *m_green_led;
+};
 
 
 #endif // TP_ESP32_REMOTE_TEMPLATE_IHM_H

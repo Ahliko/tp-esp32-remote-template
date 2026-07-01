@@ -29,10 +29,12 @@
  *   HYSTERESIS, SLEW_LIMIT, ALERT_ENABLE, DEVICE_ID
  */
 
+#include "Config/config.h"
 #include <Arduino.h>
 #include <SPI.h>
 #include <cmath>
 #include <cstdint>
+
 
 // ─────────────────────────────────────────────
 //  Adresses des registres
@@ -54,63 +56,63 @@ namespace TMP126Reg {
 // ─────────────────────────────────────────────
 namespace TMP126Config {
     // Mode opératoire
-    constexpr uint16_t MODE_CONTINUOUS = (0u << 10); ///< Mode continu (défaut)
-    constexpr uint16_t MODE_SHUTDOWN = (1u << 10); ///< Shutdown
+    constexpr uint16_t MODE_CONTINUOUS = 0u << 10; ///< Mode continu (défaut)
+    constexpr uint16_t MODE_SHUTDOWN = 1u << 10; ///< Shutdown
 
     // One-shot (en mode shutdown)
-    constexpr uint16_t ONE_SHOT = (1u << 9);
+    constexpr uint16_t ONE_SHOT = 1u << 9;
 
     // Période de conversion (Conv_Period[2:0] bits[8:6])
-    constexpr uint16_t CONV_31MS = (0u << 6); ///< 31.25 ms  (~32 Hz)
-    constexpr uint16_t CONV_62MS = (1u << 6); ///< 62.5  ms  (~16 Hz)
-    constexpr uint16_t CONV_125MS = (2u << 6); ///< 125   ms  (~8  Hz)
-    constexpr uint16_t CONV_250MS = (3u << 6); ///< 250   ms  (~4  Hz)
-    constexpr uint16_t CONV_500MS = (4u << 6); ///< 500   ms  (~2  Hz)
-    constexpr uint16_t CONV_1S = (5u << 6); ///< 1     s   (~1  Hz)
-    constexpr uint16_t CONV_4S = (6u << 6); ///< 4     s
-    constexpr uint16_t CONV_16S = (7u << 6); ///< 16    s
+    constexpr uint16_t CONV_31MS = 0u << 6; ///< 31.25 ms  (~32 Hz)
+    constexpr uint16_t CONV_62MS = 1u << 6; ///< 62.5  ms  (~16 Hz)
+    constexpr uint16_t CONV_125MS = 2u << 6; ///< 125   ms  (~8  Hz)
+    constexpr uint16_t CONV_250MS = 3u << 6; ///< 250   ms  (~4  Hz)
+    constexpr uint16_t CONV_500MS = 4u << 6; ///< 500   ms  (~2  Hz)
+    constexpr uint16_t CONV_1S = 5u << 6; ///< 1     s   (~1  Hz)
+    constexpr uint16_t CONV_4S = 6u << 6; ///< 4     s
+    constexpr uint16_t CONV_16S = 7u << 6; ///< 16    s
 
     // Averaging (AVG[1:0] bits[5:4])
-    constexpr uint16_t AVG_1 = (0u << 4); ///< Pas de moyennage
-    constexpr uint16_t AVG_8 = (1u << 4); ///< 8 mesures moyennées
-    constexpr uint16_t AVG_32 = (2u << 4); ///< 32 mesures
-    constexpr uint16_t AVG_64 = (3u << 4); ///< 64 mesures
+    constexpr uint16_t AVG_1 = 0u << 4; ///< Pas de moyennage
+    constexpr uint16_t AVG_8 = 1u << 4; ///< 8 mesures moyennées
+    constexpr uint16_t AVG_32 = 2u << 4; ///< 32 mesures
+    constexpr uint16_t AVG_64 = 3u << 4; ///< 64 mesures
 
     // Mode alerte
-    constexpr uint16_t INT_MODE = (0u << 3); ///< Interrupt mode
-    constexpr uint16_t COMP_MODE = (1u << 3); ///< Comparator mode
+    constexpr uint16_t INT_MODE = 0u << 3; ///< Interrupt mode
+    constexpr uint16_t COMP_MODE = 1u << 3; ///< Comparator mode
 
     // Activation Data_Ready sur ALERT
-    constexpr uint16_t DATA_READY_EN = (1u << 2);
+    constexpr uint16_t DATA_READY_EN = 1u << 2;
 
     // Polarité ALERT (0=active-low, 1=active-high)
-    constexpr uint16_t ALERT_POL_HIGH = (1u << 1);
+    constexpr uint16_t ALERT_POL_HIGH = 1u << 1;
 
     // Software reset
-    constexpr uint16_t SOFT_RESET = (1u << 0);
+    constexpr uint16_t SOFT_RESET = 1u << 0;
 } // namespace TMP126Config
 
 // ─────────────────────────────────────────────
 //  Bits du registre ALERT_STATUS
 // ─────────────────────────────────────────────
 namespace TMP126Alert {
-    constexpr uint16_t CRC_FLAG = (1u << 8); ///< Erreur CRC
-    constexpr uint16_t SLEW_FLAG = (1u << 5); ///< Slew rate dépassé
-    constexpr uint16_t SLEW_STATUS = (1u << 4); ///< Statut slew rate
-    constexpr uint16_t THIGH_FLAG = (1u << 3); ///< Flag limite haute
-    constexpr uint16_t THIGH_STATUS = (1u << 2); ///< Statut limite haute
-    constexpr uint16_t TLOW_FLAG = (1u << 1); ///< Flag limite basse
-    constexpr uint16_t TLOW_STATUS = (1u << 0); ///< Statut limite basse
-    constexpr uint16_t DATA_READY = (1u << 9); ///< Donnée prête
+    constexpr uint16_t CRC_FLAG = 1u << 8; ///< Erreur CRC
+    constexpr uint16_t SLEW_FLAG = 1u << 5; ///< Slew rate dépassé
+    constexpr uint16_t SLEW_STATUS = 1u << 4; ///< Statut slew rate
+    constexpr uint16_t THIGH_FLAG = 1u << 3; ///< Flag limite haute
+    constexpr uint16_t THIGH_STATUS = 1u << 2; ///< Statut limite haute
+    constexpr uint16_t TLOW_FLAG = 1u << 1; ///< Flag limite basse
+    constexpr uint16_t TLOW_STATUS = 1u << 0; ///< Statut limite basse
+    constexpr uint16_t DATA_READY = 1u << 9; ///< Donnée prête
 } // namespace TMP126Alert
 
 // ─────────────────────────────────────────────
 //  Bits du registre ALERT_ENABLE
 // ─────────────────────────────────────────────
 namespace TMP126AlertEn {
-    constexpr uint16_t SLEW_EN = (1u << 2);
-    constexpr uint16_t THIGH_EN = (1u << 1);
-    constexpr uint16_t TLOW_EN = (1u << 0);
+    constexpr uint16_t SLEW_EN = 1u << 2;
+    constexpr uint16_t THIGH_EN = 1u << 1;
+    constexpr uint16_t TLOW_EN = 1u << 0;
 } // namespace TMP126AlertEn
 
 // ─────────────────────────────────────────────
@@ -144,17 +146,18 @@ public:
      * @param spi     Bus SPI (défaut : SPI)
      * @param spiFreq Fréquence SPI en Hz (max 10 MHz)
      */
-    explicit TMP126(uint8_t csPin, SPIClass &spi = SPI, uint32_t spiFreq = 1000000UL);
+    explicit TMP126();
+    ~TMP126();
 
     /**
      * @brief Initialise le SPI et vérifie l'ID du device
      * @return true si le device répond correctement
      */
-    bool begin();
+    bool init() const;
 
     // ── Reset ──────────────────────────────
     /** Reset logiciel (bit SOFT_RESET dans CONFIG) */
-    void softReset();
+    void softReset() const;
 
     // ── Configuration ──────────────────────
     /**
@@ -162,16 +165,16 @@ public:
      * @param convPeriod  Période de conversion (TMP126Config::CONV_xxx)
      * @param averaging   Moyennage (TMP126Config::AVG_xxx)
      */
-    void setContinuousMode(uint16_t convPeriod = TMP126Config::CONV_1S, uint16_t averaging = TMP126Config::AVG_1);
+    void setContinuousMode(uint16_t convPeriod = TMP126Config::CONV_1S, uint16_t averaging = TMP126Config::AVG_1) const;
 
     /** Configure le device en mode shutdown (basse consommation ~350 nA) */
-    void setShutdownMode();
+    void setShutdownMode() const;
 
     /**
      * @brief Déclenche une conversion one-shot (depuis shutdown)
      *        La conversion dure ~6 ms, puis le device revient en shutdown.
      */
-    void triggerOneShot();
+    void triggerOneShot() const;
 
     /**
      * @brief Configure le mode de l'alerte
@@ -179,27 +182,27 @@ public:
      * @param alertActiveHigh true=ALERT actif haut, false=actif bas (défaut)
      * @param dataReadyOnAlert true=active Data_Ready sur pin ALERT
      */
-    void configureAlert(bool comparatorMode = false, bool alertActiveHigh = false, bool dataReadyOnAlert = false);
+    void configureAlert(bool comparatorMode = false, bool alertActiveHigh = false, bool dataReadyOnAlert = false) const;
 
     // ── Limites d'alerte ───────────────────
     /** Limite haute température en °C */
-    void setHighLimit(float tempCelsius);
+    void setHighLimit(float tempCelsius) const;
 
     /** Limite basse température en °C */
-    void setLowLimit(float tempCelsius);
+    void setLowLimit(float tempCelsius) const;
 
     /**
      * @brief Hystérésis (MSB = THigh_Hyst, LSB = TLow_Hyst)
      * @param thighHystCelsius Hystérésis limite haute (°C)
      * @param tlowHystCelsius  Hystérésis limite basse (°C)
      */
-    void setHysteresis(float thighHystCelsius, float tlowHystCelsius = 0.0f);
+    void setHysteresis(float thighHystCelsius, float tlowHystCelsius = 0.0f) const;
 
     /**
      * @brief Limite de slew rate (variation positive de T entre 2 conversions)
      * @param slewLimitCelsius Limite en °C par période de conversion
      */
-    void setSlewLimit(float slewLimitCelsius);
+    void setSlewLimit(float slewLimitCelsius) const;
 
     /**
      * @brief Active / désactive les sources d'alerte sur pin ALERT
@@ -207,30 +210,30 @@ public:
      * @param tlow   Alerte limite basse
      * @param slew   Alerte slew rate
      */
-    void enableAlerts(bool thigh, bool tlow, bool slew = false);
+    void enableAlerts(bool thigh, bool tlow, bool slew = false) const;
 
     // ── Lectures ───────────────────────────
     /**
      * @brief Lit la température en °C
      * @return Température en °C, NAN si erreur de communication
      */
-    float readTemperature();
+    float readTemperature() const;
 
     /**
      * @brief Lit et parse le registre ALERT_STATUS
      *        La lecture efface les flag bits en mode interrupt.
      */
-    TMP126AlertStatus readAlertStatus();
+    TMP126AlertStatus readAlertStatus() const;
 
     /** Vrai si la conversion est prête (Data_Ready dans ALERT_STATUS) */
-    bool isDataReady();
+    bool isDataReady() const;
 
     // ── Identification ─────────────────────
-    uint16_t readDeviceId();
+    uint16_t readDeviceId() const;
 
     // ── Accès bas niveau ───────────────────
-    uint16_t readReg(uint8_t reg);
-    void writeReg(uint8_t reg, uint16_t value);
+    uint16_t readReg(uint8_t reg) const;
+    void writeReg(uint8_t reg, uint16_t value) const;
 
     // ── One-shot bloquant ──────────────────
     /**
@@ -238,10 +241,10 @@ public:
      * @param timeoutMs Timeout en ms (défaut 20 ms, conversion ~6 ms typ.)
      * @return Température en °C, NAN si timeout
      */
-    float readOneShotBlocking(uint32_t timeoutMs = 20);
+    float readOneShotBlocking(uint32_t timeoutMs = 20) const;
 
 private:
-    SPIClass &_spi;
+    SPIClass *_spi;
     uint8_t _csPin;
     uint32_t _spiFreq;
 
@@ -252,12 +255,12 @@ private:
      * Pour une lecture, le data word est reçu pendant le 2e transfert.
      * Pour une écriture, le data word est envoyé pendant le 2e transfert.
      */
-    uint16_t _transfer16(uint16_t txWord);
-    uint16_t _buildCmd(uint8_t reg, bool read, bool autoInc = false);
+    uint16_t _transfer16(uint16_t txWord) const;
+    static uint16_t _buildCmd(uint8_t reg, bool read, bool autoInc = false);
     int16_t _rawToSigned(uint16_t raw);
-    uint16_t _tempToRaw(float tempCelsius);
-    float _rawToTemp(uint16_t raw);
+    static uint16_t _tempToRaw(float tempCelsius);
+    static float _rawToTemp(uint16_t raw);
 
-    void _csLow();
-    void _csHigh();
+    void _csLow() const;
+    void _csHigh() const;
 };

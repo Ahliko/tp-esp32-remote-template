@@ -12,11 +12,11 @@ public:
     explicit Sensors();
     ~Sensors() = default;
 
-    void init();
+    bool init() const;
+    void checkSensors(float &voltage, float &current, float &temp);
 private:
     INA237 *m_ina237;
     TMP126 *m_tmp126;
-    TwoWire *m_wire;
 };
 
 

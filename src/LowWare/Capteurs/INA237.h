@@ -14,29 +14,7 @@
 #include <Wire.h>
 #include <cstdint>
 
-#define INAADDR 0x40
 
-// ─────────────────────────────────────────────
-//  Adresses I2C (A1, A0 → GND/VS/SDA/SCL)
-// ─────────────────────────────────────────────
-enum class INA237Address : uint8_t {
-    GND_GND = 0x40,
-    GND_VS = 0x41,
-    GND_SDA = 0x42,
-    GND_SCL = 0x43,
-    VS_GND = 0x44,
-    VS_VS = 0x45,
-    VS_SDA = 0x46,
-    VS_SCL = 0x47,
-    SDA_GND = 0x48,
-    SDA_VS = 0x49,
-    SDA_SDA = 0x4A,
-    SDA_SCL = 0x4B,
-    SCL_GND = 0x4C,
-    SCL_VS = 0x4D,
-    SCL_SDA = 0x4E,
-    SCL_SCL = 0x4F,
-};
 
 // ─────────────────────────────────────────────
 //  Registres
@@ -99,7 +77,6 @@ enum class Averaging : uint8_t {
     AVG_1024 = 7,
 };
 
-/** Mode de conversion */
 enum class OperatingMode : uint8_t {
     SHUTDOWN = 0x0,
     TRIG_BUS = 0x1,
@@ -118,28 +95,7 @@ enum class OperatingMode : uint8_t {
     CONT_ALL = 0xF,
 };
 
-/** Bits du registre DIAG_ALRT */
-struct DiagAlert {
-    bool memstat; ///< Memory CRC status (1 = OK)
-    bool cnvrf; ///< Conversion Ready Flag
-    bool pol; ///< Power Over-Limit
-    bool busul; ///< Bus Under-Voltage
-    bool busol; ///< Bus Over-Voltage
-    bool shntul; ///< Shunt Under-Voltage
-    bool shntol; ///< Shunt Over-Voltage
-    bool tmpol; ///< Temperature Over-Limit
-    bool mathof; ///< Math Overflow
-    bool reserved;
-    // config bits
-    bool slowalert;
-    bool apol; ///< Alert Polarity
-    bool cnvr; ///< Conversion Ready enable
-    bool alatch; ///< Alert Latch Enable
-};
 
-// ─────────────────────────────────────────────
-//  Classe principale
-// ─────────────────────────────────────────────
 class INA237 {
 public:
     /**
@@ -147,7 +103,8 @@ public:
      * @param address Adresse I2C (défaut : A1=GND, A0=GND → 0x40)
      * @param wire    Bus I2C (défaut : Wire)
      */
-    explicit INA237(TwoWire &wire = Wire);
+    explicit INA237();
+    ~INA237();
 
     /**
      * @brief Initialisation. Doit être appelé après Wire.begin().
@@ -156,76 +113,62 @@ public:
      * @param range       Plage ADC shunt
      * @return true si le device répond et l'ID est valide
      */
-    bool begin(float shuntOhms, float maxCurrentA, ADCRange range = ADCRange::RANGE_163_84mV);
+    bool init(ADCRange range = ADCRange::RANGE_163_84mV);
 
     /** Reset logiciel (bit RST dans CONFIG) */
-    void reset();
+    void reset() const;
 
     // ── Configuration ADC ─────────────────────
-    void setMode(OperatingMode mode);
-    void setShuntConvTime(ConvTime ct);
-    void setBusConvTime(ConvTime ct);
-    void setTempConvTime(ConvTime ct);
-    void setAveraging(Averaging avg);
+    void setMode(OperatingMode mode) const;
+    void setShuntConvTime(ConvTime ct) const;
+    void setBusConvTime(ConvTime ct) const;
+    void setTempConvTime(ConvTime ct) const;
+    void setAveraging(Averaging avg) const;
 
     /** Délai de conversion : 0–255 (multiplié par 2 ms) */
-    void setConversionDelay(uint8_t delay2ms);
+    void setConversionDelay(uint8_t delay2ms) const;
 
     /** Active/désactive la correction de température du shunt (TEMPCO) */
-    void setShuntTempCoeff(uint16_t ppmPerCelsius);
+    void setShuntTempCoeff(uint16_t ppmPerCelsius) const;
 
     // ── Lectures ─────────────────────────────
     /** Tension shunt en Volts */
-    float readShuntVoltage();
+    float readShuntVoltage() const;
 
     /** Tension bus en Volts */
-    float readBusVoltage();
+    float readBusVoltage() const;
 
     /** Température die en °C */
-    float readTemperature();
+    float readTemperature() const;
 
     /** Courant en Ampères (nécessite calibration SHUNT_CAL) */
-    float readCurrent();
+    float readCurrent() const;
 
     /** Puissance en Watts */
-    float readPower();
+    float readPower() const;
 
-    // ── Alertes / limites ──────────────────────
-    void setShuntOverVoltageLimit(float voltLimit);
-    void setShuntUnderVoltageLimit(float voltLimit);
-    void setBusOverVoltageLimit(float voltLimit);
-    void setBusUnderVoltageLimit(float voltLimit);
-    void setTemperatureLimit(float tempCelsius);
-    void setPowerLimit(float wattLimit);
-
-    /** Lecture et parsing du registre DIAG_ALRT */
-    DiagAlert readDiagAlert();
-
-    /** Configure la pin ALERT (latch, polarity, conv-ready) */
-    void configureAlert(bool latch, bool invertPolarity, bool convReadyEnable, bool slowAlert = false);
 
     // ── Identifiants ─────────────────────────
-    uint16_t readManufacturerId(); ///< Doit retourner 0x5449 ('TI')
-    uint16_t readDeviceId(); ///< Doit retourner 0x2370 (INA237)
+    uint16_t readManufacturerId() const; ///< Doit retourner 0x5449 ('TI')
+    uint16_t readDeviceId() const; ///< Doit retourner 0x2370 (INA237)
 
     /** Vrai si une conversion est prête (polling CNVRF) */
-    bool isConversionReady();
+    bool isConversionReady() const;
 
     /** Courant LSB calculé après begin() [A/bit] */
     float getCurrentLSB() const { return _currentLSB; }
 
 private:
-    TwoWire &_wire;
-    uint8_t _addr;
+    TwoWire *_wire;
     float _currentLSB{0.0f};
     float _shuntOhms{0.0f};
     ADCRange _range{ADCRange::RANGE_163_84mV};
 
     // LSB shunt selon plage (µV)
-    float shuntLSB_uV() const { return (_range == ADCRange::RANGE_163_84mV) ? 5.0f : 1.25f; }
+    float shuntLSB_uV() const { return _range == ADCRange::RANGE_163_84mV ? 5.0f : 1.25f; }
 
-    uint16_t readReg(uint8_t reg);
-    void writeReg(uint8_t reg, uint16_t value);
+    uint16_t readReg(uint8_t reg) const;
+    void writeReg(uint8_t reg, uint16_t value) const;
 
     /** Calcule et écrit SHUNT_CAL */
     void calibrate(float shuntOhms, float maxCurrentA);

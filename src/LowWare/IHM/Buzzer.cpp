@@ -50,7 +50,7 @@ const Melody MELODY_DOUBLE_BEEP = {_doubleBeepNotes, 2, 0};
 
 Buzzer::Buzzer(uint8_t pin, uint8_t channel, bool passive) : _pin(pin), _channel(channel % 8), _passive(passive) {}
 
-void Buzzer::begin() {
+void Buzzer::init() const {
     if (_passive) {
         ledcSetup(_channel, Note::BEEP_STD, 10);
         ledcAttachPin(_pin, _channel);
@@ -148,8 +148,8 @@ bool Buzzer::update() {
 
     // ── Alarme bitonale ──────────────────────────────────────────────────────
     if (_alarm) {
-        if ((now - _alarmLastTime) >= 500) {
-            _alarmPhase = (_alarmPhase == 0) ? 1 : 0;
+        if (now - _alarmLastTime >= 500) {
+            _alarmPhase = _alarmPhase == 0 ? 1 : 0;
             _alarmLastTime = now;
             _startFreq(_alarmPhase == 0 ? Note::ALARM_HIGH : Note::ALARM_LOW);
             changed = true;
@@ -248,7 +248,7 @@ void Buzzer::_startFreq(uint32_t freq_hz) {
     } else {
         digitalWrite(_pin, HIGH);
     }
-    _active = (freq_hz > 0);
+    _active = freq_hz > 0;
 }
 
 void Buzzer::_stopFreq() {

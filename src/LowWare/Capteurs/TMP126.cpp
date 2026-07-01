@@ -4,30 +4,36 @@
 //  Constructeur & begin
 // ─────────────────────────────────────────────────────────────────────────────
 
-TMP126::TMP126(uint8_t csPin, SPIClass &spi, uint32_t spiFreq) : _spi(spi), _csPin(csPin), _spiFreq(spiFreq) {
-    // TMP126 : données clocked OUT sur falling SCLK, clocked IN sur rising SCLK
-    // → SPI Mode 0 (CPOL=0, CPHA=0), MSB first
-    _spiSettings = SPISettings(spiFreq, MSBFIRST, SPI_MODE0);
+TMP126::TMP126() {
+    _spi = new SPIClass();
+    _csPin = CSPin;
+    _spiFreq = SpiFreq;
+
+    _spiSettings = SPISettings(SpiFreq, MSBFIRST, SPI_MODE0);
 }
 
-bool TMP126::begin() {
+TMP126::~TMP126() {
+    delete _spi;
+}
+
+bool TMP126::init() const {
     pinMode(_csPin, OUTPUT);
     digitalWrite(_csPin, HIGH);
 
-    _spi.begin();
+    _spi->begin();
     delay(2); // attente POR (tINITIATION ≥ 0.5 ms)
 
-    uint16_t id = readDeviceId();
+    const uint16_t id = readDeviceId();
     // L'ID peut varier selon les révisions ; on vérifie au moins bits[15:4]
-    return (id != 0x0000 && id != 0xFFFF);
+    return id != 0x0000 && id != 0xFFFF;
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
 //  Reset
 // ─────────────────────────────────────────────────────────────────────────────
 
-void TMP126::softReset() {
-    uint16_t cfg = readReg(TMP126Reg::CONFIG);
+void TMP126::softReset() const {
+    const uint16_t cfg = readReg(TMP126Reg::CONFIG);
     writeReg(TMP126Reg::CONFIG, cfg | TMP126Config::SOFT_RESET);
     delay(2); // tRESET ≤ 0.5 ms
 }
@@ -36,27 +42,27 @@ void TMP126::softReset() {
 //  Configuration
 // ─────────────────────────────────────────────────────────────────────────────
 
-void TMP126::setContinuousMode(uint16_t convPeriod, uint16_t averaging) {
+void TMP126::setContinuousMode(const uint16_t convPeriod, const uint16_t averaging) const {
     uint16_t cfg = readReg(TMP126Reg::CONFIG);
     // Efface Mode, Conv_Period, AVG
-    cfg &= ~((1u << 10) | (7u << 6) | (3u << 4));
+    cfg &= ~(1u << 10 | 7u << 6 | 3u << 4);
     cfg |= TMP126Config::MODE_CONTINUOUS | convPeriod | averaging;
     writeReg(TMP126Reg::CONFIG, cfg);
 }
 
-void TMP126::setShutdownMode() {
+void TMP126::setShutdownMode() const {
     uint16_t cfg = readReg(TMP126Reg::CONFIG);
     cfg |= TMP126Config::MODE_SHUTDOWN;
     writeReg(TMP126Reg::CONFIG, cfg);
 }
 
-void TMP126::triggerOneShot() {
+void TMP126::triggerOneShot() const {
     uint16_t cfg = readReg(TMP126Reg::CONFIG);
     cfg |= TMP126Config::MODE_SHUTDOWN | TMP126Config::ONE_SHOT;
     writeReg(TMP126Reg::CONFIG, cfg);
 }
 
-void TMP126::configureAlert(bool comparatorMode, bool alertActiveHigh, bool dataReadyOnAlert) {
+void TMP126::configureAlert(const bool comparatorMode, const bool alertActiveHigh, const bool dataReadyOnAlert) const {
     uint16_t cfg = readReg(TMP126Reg::CONFIG);
     cfg &= ~(TMP126Config::COMP_MODE | TMP126Config::ALERT_POL_HIGH | TMP126Config::DATA_READY_EN);
     if (comparatorMode)
@@ -72,22 +78,22 @@ void TMP126::configureAlert(bool comparatorMode, bool alertActiveHigh, bool data
 //  Limites
 // ─────────────────────────────────────────────────────────────────────────────
 
-void TMP126::setHighLimit(float tempCelsius) { writeReg(TMP126Reg::THIGH_LIMIT, _tempToRaw(tempCelsius)); }
+void TMP126::setHighLimit(const float tempCelsius) const { writeReg(TMP126Reg::THIGH_LIMIT, _tempToRaw(tempCelsius)); }
 
-void TMP126::setLowLimit(float tempCelsius) { writeReg(TMP126Reg::TLOW_LIMIT, _tempToRaw(tempCelsius)); }
+void TMP126::setLowLimit(const float tempCelsius) const { writeReg(TMP126Reg::TLOW_LIMIT, _tempToRaw(tempCelsius)); }
 
-void TMP126::setHysteresis(float thighHystCelsius, float tlowHystCelsius) {
+void TMP126::setHysteresis(const float thighHystCelsius, const float tlowHystCelsius) const {
     // MSB = THigh_Hyst (bits[15:8]), LSB = TLow_Hyst (bits[7:0])
     // LSB = 0.5°C pour l'hystérésis selon datasheet
-    auto toHystRaw = [](float deg) -> uint8_t {
+    auto toHystRaw = [](const float deg) -> uint8_t {
         return static_cast<uint8_t>(constrain(roundf(deg / 0.5f), 0.0f, 255.0f));
     };
-    uint16_t val = (static_cast<uint16_t>(toHystRaw(thighHystCelsius)) << 8) |
+    const uint16_t val = static_cast<uint16_t>(toHystRaw(thighHystCelsius)) << 8 |
                    static_cast<uint16_t>(toHystRaw(tlowHystCelsius));
     writeReg(TMP126Reg::HYSTERESIS, val);
 }
 
-void TMP126::setSlewLimit(float slewLimitCelsius) {
+void TMP126::setSlewLimit(const float slewLimitCelsius) const {
     // Slew_Limit = unsigned, même LSB que la température : 0.03125 °C
     uint16_t raw = static_cast<uint16_t>(fabsf(slewLimitCelsius) / TMP126_LSB_DEG);
     // Aligner sur bits[15:2] (2 LSBs toujours 0)
@@ -95,7 +101,7 @@ void TMP126::setSlewLimit(float slewLimitCelsius) {
     writeReg(TMP126Reg::SLEW_LIMIT, raw);
 }
 
-void TMP126::enableAlerts(bool thigh, bool tlow, bool slew) {
+void TMP126::enableAlerts(const bool thigh, const bool tlow, const bool slew) const {
     uint16_t val = 0;
     if (thigh)
         val |= TMP126AlertEn::THIGH_EN;
@@ -110,15 +116,15 @@ void TMP126::enableAlerts(bool thigh, bool tlow, bool slew) {
 //  Lectures
 // ─────────────────────────────────────────────────────────────────────────────
 
-float TMP126::readTemperature() {
-    uint16_t raw = readReg(TMP126Reg::TEMP_RESULT);
+float TMP126::readTemperature() const {
+    const uint16_t raw = readReg(TMP126Reg::TEMP_RESULT);
     if (raw == 0xFFFF)
         return NAN;
     return _rawToTemp(raw);
 }
 
-TMP126AlertStatus TMP126::readAlertStatus() {
-    uint16_t reg = readReg(TMP126Reg::ALERT_STATUS);
+TMP126AlertStatus TMP126::readAlertStatus() const {
+    const uint16_t reg = readReg(TMP126Reg::ALERT_STATUS);
     TMP126AlertStatus s{};
     s.dataReady = (reg & TMP126Alert::DATA_READY) != 0;
     s.crcError = (reg & TMP126Alert::CRC_FLAG) != 0;
@@ -131,15 +137,15 @@ TMP126AlertStatus TMP126::readAlertStatus() {
     return s;
 }
 
-bool TMP126::isDataReady() { return (readReg(TMP126Reg::ALERT_STATUS) & TMP126Alert::DATA_READY) != 0; }
+bool TMP126::isDataReady() const { return (readReg(TMP126Reg::ALERT_STATUS) & TMP126Alert::DATA_READY) != 0; }
 
-uint16_t TMP126::readDeviceId() { return readReg(TMP126Reg::DEVICE_ID); }
+uint16_t TMP126::readDeviceId() const { return readReg(TMP126Reg::DEVICE_ID); }
 
-float TMP126::readOneShotBlocking(uint32_t timeoutMs) {
+float TMP126::readOneShotBlocking(const uint32_t timeoutMs) const {
     triggerOneShot();
-    uint32_t t0 = millis();
+    const uint32_t t0 = millis();
     while (!isDataReady()) {
-        if ((millis() - t0) >= timeoutMs)
+        if (millis() - t0 >= timeoutMs)
             return NAN;
         delayMicroseconds(500);
     }
@@ -150,77 +156,77 @@ float TMP126::readOneShotBlocking(uint32_t timeoutMs) {
 //  Accès registres bas niveau
 // ─────────────────────────────────────────────────────────────────────────────
 
-uint16_t TMP126::readReg(uint8_t reg) {
-    uint16_t cmd = _buildCmd(reg, true);
+uint16_t TMP126::readReg(const uint8_t reg) const {
+    const uint16_t cmd = _buildCmd(reg, true);
 
-    _spi.beginTransaction(_spiSettings);
+    _spi->beginTransaction(_spiSettings);
     _csLow();
     _transfer16(cmd); // envoi command word, dummy data reçu
-    uint16_t data = _transfer16(0x0000); // clock out data word
+    const uint16_t data = _transfer16(0x0000); // clock out data word
     _csHigh();
-    _spi.endTransaction();
+    _spi->endTransaction();
 
     return data;
 }
 
-void TMP126::writeReg(uint8_t reg, uint16_t value) {
-    uint16_t cmd = _buildCmd(reg, false);
+void TMP126::writeReg(const uint8_t reg, const uint16_t value) const {
+    const uint16_t cmd = _buildCmd(reg, false);
 
-    _spi.beginTransaction(_spiSettings);
+    _spi->beginTransaction(_spiSettings);
     _csLow();
     _transfer16(cmd); // command word
     _transfer16(value); // data word
     _csHigh();
-    _spi.endTransaction();
+    _spi->endTransaction();
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
 //  Privé
 // ─────────────────────────────────────────────────────────────────────────────
 
-uint16_t TMP126::_buildCmd(uint8_t reg, bool read, bool autoInc) {
+uint16_t TMP126::_buildCmd(const uint8_t reg, const bool read, const bool autoInc) {
     uint16_t cmd = 0;
     // Bit 15 : don't care → 0
     // Bit 14 : CRC disable → 0
     // Bits[13:10] : CRC block length → 0
     // Bit 9 : Auto Increment
     if (autoInc)
-        cmd |= (1u << 9);
+        cmd |= 1u << 9;
     // Bit 8 : R/W
     if (read)
-        cmd |= (1u << 8);
+        cmd |= 1u << 8;
     // Bits[7:0] : Sub-Address
     cmd |= static_cast<uint16_t>(reg);
     return cmd;
 }
 
-uint16_t TMP126::_transfer16(uint16_t txWord) {
+uint16_t TMP126::_transfer16(const uint16_t txWord) const {
     uint8_t hi = static_cast<uint8_t>(txWord >> 8);
     uint8_t lo = static_cast<uint8_t>(txWord & 0xFF);
-    hi = _spi.transfer(hi);
-    lo = _spi.transfer(lo);
-    return (static_cast<uint16_t>(hi) << 8) | lo;
+    hi = _spi->transfer(hi);
+    lo = _spi->transfer(lo);
+    return static_cast<uint16_t>(hi) << 8 | lo;
 }
 
-float TMP126::_rawToTemp(uint16_t raw) {
+float TMP126::_rawToTemp(const uint16_t raw) {
     // Format 14-bit two's complement, bits[15:2], bits[1:0] toujours 00
     int16_t signed_raw = static_cast<int16_t>(raw);
     signed_raw >>= 2; // décalage arithmétique → extension signe
     return static_cast<float>(signed_raw) * TMP126_LSB_DEG;
 }
 
-uint16_t TMP126::_tempToRaw(float tempCelsius) {
-    int16_t raw14 = static_cast<int16_t>(roundf(tempCelsius / TMP126_LSB_DEG));
+uint16_t TMP126::_tempToRaw(const float tempCelsius) {
+    const int16_t raw14 = static_cast<int16_t>(roundf(tempCelsius / TMP126_LSB_DEG));
     // Remet dans bits[15:2]
     return static_cast<uint16_t>(raw14 << 2);
 }
 
-void TMP126::_csLow() {
+void TMP126::_csLow() const {
     digitalWrite(_csPin, LOW);
     delayMicroseconds(1);
 }
 
-void TMP126::_csHigh() {
+void TMP126::_csHigh() const {
     delayMicroseconds(1);
     digitalWrite(_csPin, HIGH);
     delayMicroseconds(1);

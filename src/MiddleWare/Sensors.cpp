@@ -5,12 +5,19 @@
 #include "Sensors.h"
 
 Sensors::Sensors()  {
-    m_wire = &Wire;
-    m_ina237 = new INA237(m_wire);
+    m_ina237 = new INA237();
     m_tmp126 = new TMP126();
 
 }
 
-void Sensors::init() {
+bool Sensors::init() const {
+    m_ina237->init();
+    if (!m_tmp126->init()) return false;
+    return true;
+}
 
+void Sensors::checkSensors(float &voltage, float &current, float &temp) {
+    voltage = m_ina237->readBusVoltage();
+    current = m_ina237->readCurrent();
+    temp = m_ina237->readTemperature();
 }

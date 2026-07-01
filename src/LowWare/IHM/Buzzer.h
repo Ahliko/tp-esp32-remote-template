@@ -96,7 +96,7 @@ public:
     explicit Buzzer(uint8_t pin, uint8_t channel = 1, bool passive = true);
 
     /** Initialise le GPIO / LEDC. Appeler dans setup(). */
-    void begin();
+    void init() const;
 
     // ── API tone/noTone (compatible Arduino) ─
     /**
