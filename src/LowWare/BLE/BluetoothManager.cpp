@@ -2,7 +2,7 @@
 
 BLEManager::BLEManager() : _server(nullptr), _isConnected(false) {
     // Valeurs par défaut au démarrage
-    _currentConfig = { 30.0f, 85.0f, false };
+    _currentConfig = { LimitConfig(), false };
 }
 
 void BLEManager::init(const std::string& deviceName) {
@@ -30,8 +30,8 @@ void BLEManager::init(const std::string& deviceName) {
     _charCfgMaxTemp->setCallbacks(this);
 
     // Initialisation des valeurs par défaut dans les caractéristiques
-    setFloatValue(_charCfgMaxCurrent, _currentConfig.maxCurrentLimit);
-    setFloatValue(_charCfgMaxTemp, _currentConfig.maxTempLimit);
+    setFloatValue(_charCfgMaxCurrent, _currentConfig.config.current_limit_high);
+    setFloatValue(_charCfgMaxTemp, _currentConfig.config.temp_limit_high);
 
     pService->start();
 
@@ -43,6 +43,8 @@ void BLEManager::init(const std::string& deviceName) {
 }
 
 void BLEManager::updateTelemetry(float current, float pcbTemp, float ambTemp, uint32_t alarmStatus) {
+    Serial.println("telemetry");
+    Serial.println(ambTemp);
     setFloatValue(_charCurrent, current);
     setFloatValue(_charPcbTemp, pcbTemp);
     setFloatValue(_charAmbTemp, ambTemp);
@@ -90,6 +92,25 @@ void BLEManager::onDisconnect(NimBLEServer* pServer) {
     NimBLEDevice::startAdvertising(); // Relance l'advertising pour reconnexion
 }
 
+std::string uint8ToHex(uint8_t value) {
+    char buffer[3]; // 2 caractères pour l'hexa + 1 pour le caractère de fin de chaîne '\0'
+    snprintf(buffer, sizeof(buffer), "%02X", value);
+    return std::string(buffer);
+}
+
+std::string arrayToHex(const uint8_t* data, size_t length) {
+    std::string result;
+    result.reserve(length * 2); // Optimisation mémoire
+
+    char buffer[3];
+    for (size_t i = 0; i < length; i++) {
+        snprintf(buffer, sizeof(buffer), "%02X", data[i]);
+        result += buffer;
+    }
+
+    return result;
+}
+
 void BLEManager::onWrite(NimBLECharacteristic* pCharacteristic) {
     std::string uuid = pCharacteristic->getUUID().toString();
 
@@ -98,11 +119,10 @@ void BLEManager::onWrite(NimBLECharacteristic* pCharacteristic) {
         float newValue = *(float*)pCharacteristic->getValue().data();
 
         if (uuid == CHAR_CFG_MAX_CURRENT_UUID) {
-            _currentConfig.maxCurrentLimit = newValue;
+            _currentConfig.config.current_limit_high = newValue;
             _currentConfig.isUpdated = true;
-        }
-        else if (uuid == CHAR_CFG_MAX_TEMP_UUID) {
-            _currentConfig.maxTempLimit = newValue;
+        } else if (uuid == CHAR_CFG_MAX_TEMP_UUID) {
+            _currentConfig.config.temp_limit_high = newValue;
             _currentConfig.isUpdated = true;
         }
     }

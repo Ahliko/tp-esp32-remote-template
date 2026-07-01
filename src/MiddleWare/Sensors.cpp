@@ -22,10 +22,4 @@ void Sensors::checkSensors(float &voltage, float &current, float &temp) {
     voltage = m_ina237->readBusVoltage();
     current = m_ina237->readCurrent();
     temp = m_tmp126->readTemperature();
-    Serial.println(voltage);
-    Serial.println(current);
-    Serial.println(temp);
-    voltage = 8.0;
-    current = 3.0;
-    temp = 20.0;
 }

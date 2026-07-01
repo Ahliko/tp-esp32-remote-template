@@ -18,12 +18,21 @@
 
 #define BLE_DEVICE_NAME "ESP32"
 
-#define VOLTAGE_LIMIT_LOW 2
+#define VOLTAGE_LIMIT_LOW 0
 #define VOLTAGE_LIMIT_HIGH 30
-#define CURRENT_LIMIT_LOW 2
-#define CURRENT_LIMIT_HIGH 35
-#define TEMP_LIMIT_LOW 2
-#define TEMP_LIMIT_HIGH 100
+#define CURRENT_LIMIT_LOW 0
+#define CURRENT_LIMIT_HIGH 15
+#define TEMP_LIMIT_LOW 0
+#define TEMP_LIMIT_HIGH 75
+
+struct LimitConfig {
+    float voltage_limit_low = VOLTAGE_LIMIT_LOW;
+    float voltage_limit_high = VOLTAGE_LIMIT_HIGH;
+    float current_limit_low = CURRENT_LIMIT_LOW;
+    float current_limit_high = CURRENT_LIMIT_HIGH;
+    float temp_limit_low = TEMP_LIMIT_LOW;
+    float temp_limit_high = TEMP_LIMIT_HIGH;
+};
 
 
 #endif // TP_ESP32_REMOTE_TEMPLATE_CONFIG_H

@@ -3,6 +3,8 @@
 #include <NimBLEDevice.h>
 #include <string>
 
+#include "Config/config.h"
+
 // UUID du service principal
 #define SERVICE_UUID                 "4fafc201-1fb5-459e-8fcc-c5c9c331914b"
 
@@ -18,8 +20,7 @@
 #define CHAR_CFG_MAX_TEMP_UUID       "beb5483e-36e1-4688-b7f5-ea07361b26ae"
 
 struct AppConfig {
-    float maxCurrentLimit;
-    float maxTempLimit;
+    LimitConfig config;
     bool isUpdated; // Flag pour signaler à la boucle principale qu'une config a changé
 };
 
