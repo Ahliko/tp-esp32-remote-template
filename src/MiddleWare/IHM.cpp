@@ -22,17 +22,17 @@ bool IHM::init() {
     return true;
 }
 
-void IHM::update(float &voltage, float &current, float &temp) {
+void IHM::update(float &voltage, float &current, float &tempPcb, float &tempAmb1, float &tempAmb2) {
     AppConfig cfg = m_bleManager->getConfig();
     if (cfg.isUpdated) {
-        m_config.temp_limit_high = m_bleManager->getConfig().config.temp_limit_high;
+        m_config = m_bleManager->getConfig().config;
         m_bleManager->clearUpdateFlag();
     }
-    checkValues(voltage, current, temp);
-    m_bleManager->updateTelemetry(current, temp, temp, 0);
+    checkValues(voltage, current, tempPcb, tempAmb1, tempAmb2);
+    m_bleManager->updateTelemetry(current, tempPcb, tempAmb1, tempAmb2, m_isAlert);
 }
 
-void IHM::checkValues(float &voltage, float &current, float &temp) {
+void IHM::checkValues(float &voltage, float &current, float &tempPcb, float &tempAmb1, float &tempAmb2) {
     if (m_config.voltage_limit_low > voltage || voltage > m_config.voltage_limit_high) {
         Serial.println("ALERT on Voltage");
         displayAlert();
@@ -45,9 +45,23 @@ void IHM::checkValues(float &voltage, float &current, float &temp) {
         return;
     }
 
-    if (m_config.temp_limit_low > temp || temp > m_config.temp_limit_high) {
-        Serial.println("ALERT on Temp");
-        Serial.printf("low : %f, high : %f, temp : %f\n", m_config.temp_limit_low, m_config.temp_limit_high, temp);
+    if (m_config.temp_pcb_limit_low > tempPcb || tempPcb > m_config.temp_pcb_limit_high) {
+        Serial.println("ALERT on TempPCB");
+        Serial.printf("low : %f, high : %f, temp : %f\n", m_config.temp_pcb_limit_low, m_config.temp_pcb_limit_high, tempPcb);
+        displayAlert();
+        return;
+    }
+
+    if (m_config.temp_amb_limit_low > tempAmb1 || tempAmb1 > m_config.temp_amb_limit_high) {
+        Serial.println("ALERT on TempAMB1");
+        Serial.printf("low : %f, high : %f, temp : %f\n", m_config.temp_pcb_limit_low, m_config.temp_pcb_limit_high, tempAmb1);
+        displayAlert();
+        return;
+    }
+
+    if (m_config.temp_amb_limit_low > tempAmb2 || tempAmb2 > m_config.temp_amb_limit_high) {
+        Serial.println("ALERT on TempAMB2");
+        Serial.printf("low : %f, high : %f, temp : %f\n", m_config.temp_pcb_limit_low, m_config.temp_pcb_limit_high, tempAmb2);
         displayAlert();
         return;
     }

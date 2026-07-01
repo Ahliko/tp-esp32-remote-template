@@ -11,13 +11,14 @@
 // UUIDs Télémétrie (READ | NOTIFY)
 #define CHAR_CURRENT_UUID            "beb5483e-36e1-4688-b7f5-ea07361b26a8"
 #define CHAR_PCB_TEMP_UUID           "beb5483e-36e1-4688-b7f5-ea07361b26a9"
-#define CHAR_AMB_TEMP_UUID           "beb5483e-36e1-4688-b7f5-ea07361b26aa"
-#define CHAR_ALARM_STAT_UUID         "beb5483e-36e1-4688-b7f5-ea07361b26ab"
-#define CHAR_LOGS_UUID               "beb5483e-36e1-4688-b7f5-ea07361b26ac"
+#define CHAR_AMB1_TEMP_UUID           "beb5483e-36e1-4688-b7f5-ea07361b26aa"
+#define CHAR_AMB2_TEMP_UUID           "beb5483e-36e1-4688-b7f5-ea07361b26ab"
+#define CHAR_ALARM_STAT_UUID         "beb5483e-36e1-4688-b7f5-ea07361b26ac"
+#define CHAR_LOGS_UUID               "beb5483e-36e1-4688-b7f5-ea07361b26ad"
 
 // UUIDs Configuration (READ | WRITE)
-#define CHAR_CFG_MAX_CURRENT_UUID    "beb5483e-36e1-4688-b7f5-ea07361b26ad"
-#define CHAR_CFG_MAX_TEMP_UUID       "beb5483e-36e1-4688-b7f5-ea07361b26ae"
+#define CHAR_CFG_MAX_CURRENT_UUID    "beb5483e-36e1-4688-b7f5-ea07361b26ae"
+#define CHAR_CFG_MAX_TEMP_UUID       "beb5483e-36e1-4688-b7f5-ea07361b26af"
 
 struct AppConfig {
     LimitConfig config;
@@ -32,7 +33,7 @@ public:
     void init(const std::string& deviceName);
 
     // Mises à jour des données exposées
-    void updateTelemetry(float current, float pcbTemp, float ambTemp, uint32_t alarmStatus);
+    void updateTelemetry(float current, float pcbTemp, float ambTemp1, float ambTemp2, uint32_t alarmStatus);
     void updateLogs(const std::string& logMessage);
 
     // Gestion de la configuration distante
@@ -52,7 +53,8 @@ private:
 
     NimBLECharacteristic* _charCurrent;
     NimBLECharacteristic* _charPcbTemp;
-    NimBLECharacteristic* _charAmbTemp;
+    NimBLECharacteristic* _charAmbTemp1;
+    NimBLECharacteristic* _charAmbTemp2;
     NimBLECharacteristic* _charAlarm;
     NimBLECharacteristic* _charLogs;
 

@@ -10,7 +10,9 @@ BLEManager bleManager;
 
 float voltage;
 float current;
-float temp;
+float tempPcb;
+float tempAmb1;
+float tempAmb2;
 
 void setup() {
     Serial.begin(115200);
@@ -22,7 +24,7 @@ void setup() {
 }
 
 void loop() {
-    sensors.checkSensors(voltage, current, temp);
-    ihm.checkValues(voltage, current, temp);
+    sensors.checkSensors(voltage, current, tempPcb, tempAmb1, tempAmb2);
+    ihm.update(voltage, current, tempPcb, tempAmb1, tempAmb2);
     delay(500);
 }

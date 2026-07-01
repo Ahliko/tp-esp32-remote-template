@@ -11,7 +11,7 @@ Thermistor::Thermistor(const uint8_t pin, const float seriesResistor,
 {
 }
 
-void Thermistor::begin() const {
+void Thermistor::init() const {
     pinMode(_pin, INPUT);
     // Atténuation à 11dB pour permettre des lectures jusqu'à ~3.1V sur l'ESP32
     analogSetPinAttenuation(_pin, ADC_11db);

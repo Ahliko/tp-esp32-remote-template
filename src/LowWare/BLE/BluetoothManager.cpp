@@ -17,7 +17,8 @@ void BLEManager::init(const std::string& deviceName) {
     // --- Instanciation des caractéristiques de Télémétrie ---
     _charCurrent = pService->createCharacteristic(CHAR_CURRENT_UUID, NIMBLE_PROPERTY::READ | NIMBLE_PROPERTY::NOTIFY);
     _charPcbTemp = pService->createCharacteristic(CHAR_PCB_TEMP_UUID, NIMBLE_PROPERTY::READ | NIMBLE_PROPERTY::NOTIFY);
-    _charAmbTemp = pService->createCharacteristic(CHAR_AMB_TEMP_UUID, NIMBLE_PROPERTY::READ | NIMBLE_PROPERTY::NOTIFY);
+    _charAmbTemp1 = pService->createCharacteristic(CHAR_AMB1_TEMP_UUID, NIMBLE_PROPERTY::READ | NIMBLE_PROPERTY::NOTIFY);
+    _charAmbTemp2 = pService->createCharacteristic(CHAR_AMB2_TEMP_UUID, NIMBLE_PROPERTY::READ | NIMBLE_PROPERTY::NOTIFY);
     _charAlarm   = pService->createCharacteristic(CHAR_ALARM_STAT_UUID, NIMBLE_PROPERTY::READ | NIMBLE_PROPERTY::NOTIFY);
     _charLogs    = pService->createCharacteristic(CHAR_LOGS_UUID, NIMBLE_PROPERTY::READ | NIMBLE_PROPERTY::NOTIFY);
 
@@ -31,7 +32,7 @@ void BLEManager::init(const std::string& deviceName) {
 
     // Initialisation des valeurs par défaut dans les caractéristiques
     setFloatValue(_charCfgMaxCurrent, _currentConfig.config.current_limit_high);
-    setFloatValue(_charCfgMaxTemp, _currentConfig.config.temp_limit_high);
+    setFloatValue(_charCfgMaxTemp, _currentConfig.config.temp_pcb_limit_high);
 
     pService->start();
 
@@ -42,19 +43,21 @@ void BLEManager::init(const std::string& deviceName) {
     pAdvertising->start();
 }
 
-void BLEManager::updateTelemetry(float current, float pcbTemp, float ambTemp, uint32_t alarmStatus) {
+void BLEManager::updateTelemetry(float current, float pcbTemp, float ambTemp1, float ambTemp2, uint32_t alarmStatus) {
     Serial.println("telemetry");
-    Serial.println(ambTemp);
+    Serial.println(ambTemp1);
     setFloatValue(_charCurrent, current);
     setFloatValue(_charPcbTemp, pcbTemp);
-    setFloatValue(_charAmbTemp, ambTemp);
+    setFloatValue(_charAmbTemp1, ambTemp1);
+    setFloatValue(_charAmbTemp2, ambTemp2);
 
     _charAlarm->setValue((uint8_t*)&alarmStatus, sizeof(alarmStatus));
 
     if (_isConnected) {
         _charCurrent->notify();
         _charPcbTemp->notify();
-        _charAmbTemp->notify();
+        _charAmbTemp1->notify();
+        _charAmbTemp2->notify();
         _charAlarm->notify();
     }
 }
@@ -122,7 +125,7 @@ void BLEManager::onWrite(NimBLECharacteristic* pCharacteristic) {
             _currentConfig.config.current_limit_high = newValue;
             _currentConfig.isUpdated = true;
         } else if (uuid == CHAR_CFG_MAX_TEMP_UUID) {
-            _currentConfig.config.temp_limit_high = newValue;
+            _currentConfig.config.temp_pcb_limit_high = newValue;
             _currentConfig.isUpdated = true;
         }
     }

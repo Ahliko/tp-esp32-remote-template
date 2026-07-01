@@ -24,7 +24,7 @@ public:
     /**
      * @brief Initialise la broche ADC
      */
-    void begin() const;
+    void init() const;
 
     /**
      * @brief Lit et calcule la température en degrés Celsius
