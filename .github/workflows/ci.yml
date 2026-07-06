@@ -3,9 +3,9 @@ name: CI - PlatformIO Native Tests
 # Déclenche la pipeline à chaque push ou pull request sur la branche main/master
 on:
   push:
-    branches: [ "main", "master" ]
+    branches: [ "main", "dev" ]
   pull_request:
-    branches: [ "main", "master" ]
+    branches: [ "main", "dev" ]
 
 jobs:
   test-native:
