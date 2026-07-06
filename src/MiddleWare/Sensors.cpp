@@ -6,8 +6,8 @@
 
 #include "Config/config.h"
 
-Sensors::Sensors() : m_tmp126low(TMP126Low(CSPin, SpiFreq)) {
-    m_ina237 = new INA237();
+Sensors::Sensors() : m_tmp126low(TMP126Low(CSPin, SpiFreq)), m_ina237low(INA237Low(INAADDR)) {
+    m_ina237 = new INA237(m_ina237low, ShuntOhms, MaxCurrentA);
     m_tmp126 = new TMP126(m_tmp126low);
     m_thermistor1 = new Thermistor(Thermistor1_Pin, SeriesResistor, NominalResistor, BetaValue, true);
     m_thermistor2 = new Thermistor(Thermistor2_Pin, SeriesResistor, NominalResistor, BetaValue, true);
