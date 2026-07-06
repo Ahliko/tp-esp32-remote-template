@@ -24,15 +24,16 @@ void BLEManager::init(const std::string& deviceName) {
 
     // --- Instanciation des caractéristiques de Configuration ---
     _charCfgMaxCurrent = pService->createCharacteristic(CHAR_CFG_MAX_CURRENT_UUID, NIMBLE_PROPERTY::READ | NIMBLE_PROPERTY::WRITE);
-    _charCfgMaxTemp    = pService->createCharacteristic(CHAR_CFG_MAX_TEMP_UUID, NIMBLE_PROPERTY::READ | NIMBLE_PROPERTY::WRITE); // TODO : ajouter un param pour la temp ambiante
+    _charCfgMaxTempPcb    = pService->createCharacteristic(CHAR_CFG_MAX_TEMP_PCB_UUID, NIMBLE_PROPERTY::READ | NIMBLE_PROPERTY::WRITE);
+    _charCfgMaxTempAmb    = pService->createCharacteristic(CHAR_CFG_MAX_TEMP_AMB_UUID, NIMBLE_PROPERTY::READ | NIMBLE_PROPERTY::WRITE);
 
     // Assigner les callbacks d'écriture pour la config
     _charCfgMaxCurrent->setCallbacks(this);
-    _charCfgMaxTemp->setCallbacks(this);
+    _charCfgMaxTempPcb->setCallbacks(this);
 
     // Initialisation des valeurs par défaut dans les caractéristiques
     setFloatValue(_charCfgMaxCurrent, _currentConfig.config.current_limit_high);
-    setFloatValue(_charCfgMaxTemp, _currentConfig.config.temp_pcb_limit_high);
+    setFloatValue(_charCfgMaxTempPcb, _currentConfig.config.temp_pcb_limit_high);
 
     pService->start();
 
@@ -124,7 +125,7 @@ void BLEManager::onWrite(NimBLECharacteristic* pCharacteristic) {
         if (uuid == CHAR_CFG_MAX_CURRENT_UUID) {
             _currentConfig.config.current_limit_high = newValue;
             _currentConfig.isUpdated = true;
-        } else if (uuid == CHAR_CFG_MAX_TEMP_UUID) {
+        } else if (uuid == CHAR_CFG_MAX_TEMP_PCB_UUID) {
             _currentConfig.config.temp_pcb_limit_high = newValue;
             _currentConfig.isUpdated = true;
         }

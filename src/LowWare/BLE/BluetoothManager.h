@@ -18,7 +18,8 @@
 
 // UUIDs Configuration (READ | WRITE)
 #define CHAR_CFG_MAX_CURRENT_UUID    "beb5483e-36e1-4688-b7f5-ea07361b26ae"
-#define CHAR_CFG_MAX_TEMP_UUID       "beb5483e-36e1-4688-b7f5-ea07361b26af"
+#define CHAR_CFG_MAX_TEMP_PCB_UUID       "beb5483e-36e1-4688-b7f5-ea07361b26af"
+#define CHAR_CFG_MAX_TEMP_AMB_UUID       "beb5483e-36e1-4688-b7f5-ea07361b26b0"
 
 struct AppConfig {
     LimitConfig config;
@@ -59,7 +60,8 @@ private:
     NimBLECharacteristic* _charLogs;
 
     NimBLECharacteristic* _charCfgMaxCurrent;
-    NimBLECharacteristic* _charCfgMaxTemp;
+    NimBLECharacteristic* _charCfgMaxTempPcb;
+    NimBLECharacteristic* _charCfgMaxTempAmb;
 
     bool _isConnected;
     AppConfig _currentConfig;
