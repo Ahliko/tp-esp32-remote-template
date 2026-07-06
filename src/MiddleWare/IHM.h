@@ -5,13 +5,14 @@
 #ifndef TP_ESP32_REMOTE_TEMPLATE_IHM_H
 #define TP_ESP32_REMOTE_TEMPLATE_IHM_H
 #include "Config/config.h"
+#include "Logging.h"
 #include "LowWare/BLE/BluetoothManager.h"
 #include "LowWare/IHM/Buzzer.h"
 #include "LowWare/IHM/LED.h"
 
 class IHM {
 public:
-    explicit IHM(); //BLEManager &ble, RAMManager &ram
+    explicit IHM(Logging& logger);
     ~IHM() = default;
 
     bool init();
@@ -31,7 +32,8 @@ private:
     LED *m_green_led;
     BLEManager *m_bleManager;
     LimitConfig m_config;
-    bool m_isAlert;
+    bool m_isAlert = false;
+    Logging& m_logger;
 };
 
 

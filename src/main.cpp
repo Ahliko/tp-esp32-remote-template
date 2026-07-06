@@ -1,11 +1,15 @@
 #include <Arduino.h>
 
 #include "LowWare/BLE/BluetoothManager.h"
+#include "LowWare/PSRAM/PSRAM.h"
 #include "MiddleWare/IHM.h"
+#include "MiddleWare/Logging.h"
 #include "MiddleWare/Sensors.h"
 
+PSRAM systemRam(512 * 1024);
+Logging systemLogger(systemRam);
 Sensors sensors;
-IHM ihm;
+IHM ihm(systemLogger);
 BLEManager bleManager;
 
 float voltage;

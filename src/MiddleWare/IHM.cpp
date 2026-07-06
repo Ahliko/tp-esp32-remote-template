@@ -6,7 +6,7 @@
 
 #include "LowWare/BLE/BluetoothManager.h"
 
-IHM::IHM() {
+IHM::IHM(Logging& logger) : m_logger(logger) {
     m_buzzer = new Buzzer(BUZZER_PIN);
     m_green_led = new LED(LED_GREEN_PIN);
     m_red_led = new LED(LED_RED_PIN);
@@ -33,14 +33,18 @@ void IHM::update(float &voltage, float &current, float &tempPcb, float &tempAmb1
 }
 
 void IHM::checkValues(float &voltage, float &current, float &tempPcb, float &tempAmb1, float &tempAmb2) {
+    uint32_t now = millis();
+
     if (m_config.voltage_limit_low > voltage || voltage > m_config.voltage_limit_high) {
         Serial.println("ALERT on Voltage");
+        m_logger.logAlarm(now, "Alerte Tension hors limites", voltage);
         displayAlert();
         return;
     }
 
     if (m_config.current_limit_low > current || current > m_config.current_limit_high) {
         Serial.println("ALERT on Current");
+        m_logger.logAlarm(now, "Alerte Courant hors limites", current);
         displayAlert();
         return;
     }
@@ -48,23 +52,27 @@ void IHM::checkValues(float &voltage, float &current, float &tempPcb, float &tem
     if (m_config.temp_pcb_limit_low > tempPcb || tempPcb > m_config.temp_pcb_limit_high) {
         Serial.println("ALERT on TempPCB");
         Serial.printf("low : %f, high : %f, temp : %f\n", m_config.temp_pcb_limit_low, m_config.temp_pcb_limit_high, tempPcb);
+        m_logger.logAlarm(now, "Alerte Température PCB", tempPcb);
         displayAlert();
         return;
     }
 
     if (m_config.temp_amb_limit_low > tempAmb1 || tempAmb1 > m_config.temp_amb_limit_high) {
         Serial.println("ALERT on TempAMB1");
-        Serial.printf("low : %f, high : %f, temp : %f\n", m_config.temp_pcb_limit_low, m_config.temp_pcb_limit_high, tempAmb1);
+        Serial.printf("low : %f, high : %f, temp : %f\n", m_config.temp_amb_limit_low, m_config.temp_amb_limit_high, tempAmb1);
+        m_logger.logAlarm(now, "Alerte Température AMB1", tempAmb1);
         displayAlert();
         return;
     }
 
     if (m_config.temp_amb_limit_low > tempAmb2 || tempAmb2 > m_config.temp_amb_limit_high) {
         Serial.println("ALERT on TempAMB2");
-        Serial.printf("low : %f, high : %f, temp : %f\n", m_config.temp_pcb_limit_low, m_config.temp_pcb_limit_high, tempAmb2);
+        Serial.printf("low : %f, high : %f, temp : %f\n", m_config.temp_amb_limit_low, m_config.temp_amb_limit_high, tempAmb2);
+        m_logger.logAlarm(now, "Alerte Température AMB2", tempAmb2);
         displayAlert();
         return;
     }
+
     displayAndSendValues();
 }
 
