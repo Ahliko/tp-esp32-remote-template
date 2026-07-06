@@ -4,8 +4,9 @@
 
 #ifndef TP_ESP32_REMOTE_TEMPLATE_SENSORS_H
 #define TP_ESP32_REMOTE_TEMPLATE_SENSORS_H
+#include "../LowWare/Capteurs/TMP/TMP126.h"
 #include "LowWare/Capteurs/INA237.h"
-#include "LowWare/Capteurs/TMP126.h"
+#include "LowWare/Capteurs/TMP/TMP126Low.h"
 #include "LowWare/Capteurs/Thermistor.h"
 
 class Sensors {
@@ -20,6 +21,7 @@ private:
     TMP126 *m_tmp126;
     Thermistor *m_thermistor1;
     Thermistor *m_thermistor2;
+    TMP126Low m_tmp126low;
 };
 
 
