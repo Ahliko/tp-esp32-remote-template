@@ -75,7 +75,7 @@ uint16_t INA237::readManufacturerId() const { return _transport.readReg(INA237Re
 bool INA237::isConversionReady() const { return (_transport.readReg(0x0F) & DIAG_CNVRF) != 0; }
 
 void INA237::calibrate(const float shuntOhms, const float maxCurrentA) {
-    _currentLSB = (maxCurrentA / 32768.0f * 100);
+    _currentLSB = maxCurrentA / 32768.0f;
     uint16_t shuntCal = calcShuntCal(_currentLSB, shuntOhms, _range);
     _transport.writeReg(INA237Reg::SHUNT_CAL, shuntCal);
 }
