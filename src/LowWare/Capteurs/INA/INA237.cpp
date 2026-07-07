@@ -10,8 +10,9 @@ INA237::INA237(INA237Transport &transport, float shuntOhms, float maxCurrentA) :
 
 bool INA237::init(const ADCRange range) {
     _range = range;
-    if (!_transport.initBus())
+    if (!_transport.initBus()) {
         return false;
+    }
 
     if (readManufacturerId() != MANUFACTURER_ID_EXPECTED) {
         return false;

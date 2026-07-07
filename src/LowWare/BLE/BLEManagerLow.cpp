@@ -14,6 +14,21 @@ void BLEManagerLow::init(const std::string &deviceName) {
                                                                              BLECharacteristic::PROPERTY_NOTIFY);
     _charCurrent->addDescriptor(new BLE2902());
 
+    _charPcbTemp = pService->createCharacteristic(CHAR_PCB_TEMP_UUID, BLECharacteristic::PROPERTY_READ | BLECharacteristic::PROPERTY_NOTIFY);
+    _charPcbTemp->addDescriptor(new BLE2902());
+
+    _charAmbTemp1 = pService->createCharacteristic(CHAR_AMB1_TEMP_UUID, BLECharacteristic::PROPERTY_READ | BLECharacteristic::PROPERTY_NOTIFY);
+    _charAmbTemp1->addDescriptor(new BLE2902());
+
+    _charAmbTemp2 = pService->createCharacteristic(CHAR_AMB2_TEMP_UUID, BLECharacteristic::PROPERTY_READ | BLECharacteristic::PROPERTY_NOTIFY);
+    _charAmbTemp2->addDescriptor(new BLE2902());
+
+    _charAlarm = pService->createCharacteristic(CHAR_ALARM_STAT_UUID, BLECharacteristic::PROPERTY_READ | BLECharacteristic::PROPERTY_NOTIFY);
+    _charAlarm->addDescriptor(new BLE2902());
+
+    _charLogs = pService->createCharacteristic(CHAR_LOGS_UUID, BLECharacteristic::PROPERTY_READ | BLECharacteristic::PROPERTY_NOTIFY);
+    _charLogs->addDescriptor(new BLE2902());
+
     _charCfgMaxCurrent = pService->createCharacteristic(
             CHAR_CFG_MAX_CURRENT_UUID, BLECharacteristic::PROPERTY_READ | BLECharacteristic::PROPERTY_WRITE);
     _charCfgMaxTempPcb = pService->createCharacteristic(
