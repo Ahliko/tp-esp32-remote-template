@@ -39,7 +39,6 @@
 #define TEMP_AMB_LIMIT_LOW 0
 #define TEMP_AMB_LIMIT_HIGH 75
 
-
 struct LimitConfig {
     float voltage_limit_low = VOLTAGE_LIMIT_LOW;
     float voltage_limit_high = VOLTAGE_LIMIT_HIGH;

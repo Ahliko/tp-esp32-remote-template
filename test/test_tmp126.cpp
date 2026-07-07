@@ -1,8 +1,9 @@
-#include <gtest/gtest.h>
 #include <cmath>
+#include <gtest/gtest.h>
 #include "../src/LowWare/Capteurs/TMP/TMP126.h"
 
 #include "LowWareTest/TMP126LowTest.h"
+
 TEST(TMP126Test, RawToTempConversion) {
     // 0°C devrait être 0x0000
     EXPECT_NEAR(0.0f, TMP126::rawToTemp(0x0000), 0.001f);
@@ -13,6 +14,7 @@ TEST(TMP126Test, RawToTempConversion) {
     // Température négative (-25°C)
     EXPECT_NEAR(-25.0f, TMP126::rawToTemp(TMP126::tempToRaw(-25.0f)), 0.001f);
 }
+
 TEST(TMP126Test, BuildCmdFormat) {
     // Read TEMP_RESULT (0x00) sans AutoInc
     uint16_t cmdRead = TMP126::buildCmd(TMP126Reg::TEMP_RESULT, true, false);

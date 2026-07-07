@@ -37,10 +37,7 @@ enum class Averaging : uint8_t {
     AVG_512 = 6,
     AVG_1024 = 7
 };
-enum class OperatingMode : uint8_t {
-    SHUTDOWN = 0x0,
-    CONT_ALL = 0xF
-};
+enum class OperatingMode : uint8_t { SHUTDOWN = 0x0, CONT_ALL = 0xF };
 
 class INA237 {
 public:

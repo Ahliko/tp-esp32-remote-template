@@ -11,13 +11,13 @@ TEST(IHMTest, CheckTelemetryIsSentToBLE) {
 
 TEST(IHMTest, CheckConfigUpdate) {
     BLEManagerTest mockBle;
-    
+
     mockBle.simulateClientWriteConfig(15.0f, 60.0f);
-    
+
     AppConfig cfg = mockBle.getConfig();
     EXPECT_TRUE(cfg.isUpdated);
     EXPECT_FLOAT_EQ(15.0f, cfg.config.current_limit_high);
-    
+
     mockBle.clearUpdateFlag();
     EXPECT_FALSE(mockBle.getConfig().isUpdated);
 }

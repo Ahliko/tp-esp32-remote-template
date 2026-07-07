@@ -18,7 +18,8 @@ void setup() {
     delay(1000);
     Serial.println("BOOT OK");
 
-    if (!sensors.init()) return;
+    if (!sensors.init())
+        return;
     (void) ihm.init();
 }
 

@@ -225,6 +225,4 @@ void Buzzer::_stopFreq() {
     }
 }
 
-uint32_t Buzzer::_dutyValue() const {
-    return static_cast<uint32_t>(_volume * 1023 / 100);
-}
+uint32_t Buzzer::_dutyValue() const { return static_cast<uint32_t>(_volume * 1023 / 100); }

@@ -12,6 +12,7 @@ public:
 
     bool init();
     void update(float &voltage, float &current, float &tempPcb, float &tempAmb1, float &tempAmb2);
+
 private:
     void checkValues(float &voltage, float &current, float &tempPcb, float &tempAmb1, float &tempAmb2);
     void displayAndSendValues();

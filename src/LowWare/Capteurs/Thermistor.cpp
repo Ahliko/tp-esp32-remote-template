@@ -1,15 +1,9 @@
 #include "Thermistor.h"
 
-Thermistor::Thermistor(const uint8_t pin, const float seriesResistor, 
-                       const float nominalResistor, const float betaValue, 
-                       const bool thermistorToGround)
-    : _pin(pin), 
-      _seriesResistor(seriesResistor), 
-      _nominalResistor(nominalResistor), 
-      _betaValue(betaValue),
-      _thermistorToGround(thermistorToGround) 
-{
-}
+Thermistor::Thermistor(const uint8_t pin, const float seriesResistor, const float nominalResistor,
+                       const float betaValue, const bool thermistorToGround) :
+    _pin(pin), _seriesResistor(seriesResistor), _nominalResistor(nominalResistor), _betaValue(betaValue),
+    _thermistorToGround(thermistorToGround) {}
 
 void Thermistor::init() const {
     pinMode(_pin, INPUT);

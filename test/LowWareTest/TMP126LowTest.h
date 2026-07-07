@@ -1,7 +1,7 @@
 #pragma once
+#include <chrono>
 #include <map>
 #include <thread>
-#include <chrono>
 
 #include "Interface/TMP126Transport.h"
 
@@ -28,19 +28,11 @@ public:
         registers[regAddr] = dataWord;
     }
 
-    uint32_t getMillis() const override {
-        return simulatedMillis++;
-    }
+    uint32_t getMillis() const override { return simulatedMillis++; }
 
-    void delayUs(uint32_t us) const override {
-        simulatedMillis += (us / 1000);
-    }
+    void delayUs(uint32_t us) const override { simulatedMillis += (us / 1000); }
 
-    void simulateTemperatureRaw(uint16_t rawTemp) {
-        registers[0x00] = rawTemp;
-    }
+    void simulateTemperatureRaw(uint16_t rawTemp) { registers[0x00] = rawTemp; }
 
-    void setReadyFlag() {
-        registers[0x01] |= (1u << 9);
-    }
+    void setReadyFlag() { registers[0x01] |= (1u << 9); }
 };

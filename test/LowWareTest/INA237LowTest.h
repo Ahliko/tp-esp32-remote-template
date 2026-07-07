@@ -17,17 +17,15 @@ public:
 
     bool initBus() const override { return true; }
 
-    uint16_t readReg(uint8_t reg) const override {
-        return registers[reg];
-    }
+    uint16_t readReg(uint8_t reg) const override { return registers[reg]; }
 
-    void writeReg(uint8_t reg, uint16_t value) const override {
-        registers[reg] = value;
-    }
+    void writeReg(uint8_t reg, uint16_t value) const override { registers[reg] = value; }
 
     void delayMs(uint32_t) const override {}
 
     void simulateBusVoltageRaw(uint16_t raw) { registers[0x05] = raw; }
+
     void simulateCurrentRaw(uint16_t raw) { registers[0x07] = raw; }
+
     void simulateTemperatureRaw(uint16_t raw) { registers[0x06] = raw; }
 };

@@ -13,6 +13,7 @@ public:
 
     bool init() const;
     void checkSensors(float &voltage, float &current, float &tempPcb, float &tempAmb1, float &tempAmb2);
+
 private:
     INA237 *m_ina237;
     TMP126 *m_tmp126;
