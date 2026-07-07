@@ -4,13 +4,13 @@
 
 #include "IHM.h"
 
-#include "LowWare/BLE/BluetoothManager.h"
+#include "LowWare/BLE/BLEManagerLow.h"
 
 IHM::IHM() {
     m_buzzer = new Buzzer(BUZZER_PIN);
     m_green_led = new LED(LED_GREEN_PIN);
     m_red_led = new LED(LED_RED_PIN);
-    m_bleManager = new BLEManager();
+    m_bleManager = new BLEManagerLow();
     m_config = LimitConfig();
 }
 
