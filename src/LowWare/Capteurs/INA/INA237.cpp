@@ -65,7 +65,7 @@ float INA237::readTemperature() const {
 }
 
 float INA237::readCurrent() const {
-    const auto raw = static_cast<int16_t>(_transport.readReg(INA237Reg::CURRENT)); //TODO : a tester à partir d'ici
+    const auto raw = static_cast<int16_t>(_transport.readReg(INA237Reg::CURRENT));
     Serial.printf("raw current value : %hd\n", raw);
     Serial.printf("raw + lsb current value : %f\n", static_cast<float>(raw) * _currentLSB);
     return static_cast<float>(raw) * _currentLSB;
