@@ -10,7 +10,10 @@ Sensors::Sensors() : m_tmp126low(TMP126Low(CSPin, SpiFreq)), m_ina237low(INA237L
 }
 
 bool Sensors::init() const {
-    m_ina237->init();
+    if (!m_ina237->init()) {
+        Serial.println("Error init INA237");
+        // return false;
+    }
     if (!m_tmp126->init()) {
         Serial.println("TMP init failed");
         return false;
