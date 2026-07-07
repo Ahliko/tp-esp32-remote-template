@@ -1,7 +1,5 @@
 #include "INA237.h"
 
-#include <HardwareSerial.h>
-
 static constexpr uint16_t MANUFACTURER_ID_EXPECTED = 0x5449; // 'TI'
 static constexpr uint16_t CONFIG_RST_BIT = 1u << 15;
 static constexpr uint16_t CONFIG_ADCRANGE_BIT = 1u << 4;
@@ -13,12 +11,10 @@ INA237::INA237(INA237Transport &transport, float shuntOhms, float maxCurrentA) :
 bool INA237::init(const ADCRange range) {
     _range = range;
     if (!_transport.initBus()) {
-        Serial.println("Init Bus error INA237");
         return false;
     }
 
     if (readManufacturerId() != MANUFACTURER_ID_EXPECTED) {
-        Serial.println("Bad Manuf id INA237");
         return false;
     }
 
@@ -66,8 +62,6 @@ float INA237::readTemperature() const {
 
 float INA237::readCurrent() const {
     const auto raw = static_cast<int16_t>(_transport.readReg(INA237Reg::CURRENT));
-    Serial.printf("raw current value : %hd\n", raw);
-    Serial.printf("raw + lsb current value : %f\n", static_cast<float>(raw) * _currentLSB);
     return static_cast<float>(raw) * _currentLSB;
 }
 
