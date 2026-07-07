@@ -5,7 +5,6 @@ TMP126::TMP126(TMP126Transport& transport) : _transport(transport) {}
 bool TMP126::init() const {
     if (!_transport.initBus()) return false;
 
-    // Attente POR (tINITIATION ≥ 0.5 ms)
     _transport.delayUs(2000);
 
     const uint16_t id = readDeviceId();
@@ -15,7 +14,7 @@ bool TMP126::init() const {
 void TMP126::softReset() const {
     const uint16_t cfg = readReg(TMP126Reg::CONFIG);
     writeReg(TMP126Reg::CONFIG, cfg | TMP126Config::SOFT_RESET);
-    _transport.delayUs(2000); // tRESET ≤ 0.5 ms
+    _transport.delayUs(2000);
 }
 
 void TMP126::setContinuousMode(const uint16_t convPeriod, const uint16_t averaging) const {

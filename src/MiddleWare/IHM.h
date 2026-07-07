@@ -1,7 +1,3 @@
-//
-// Created by Ahliko on 01/07/2026.
-//
-
 #ifndef TP_ESP32_REMOTE_TEMPLATE_IHM_H
 #define TP_ESP32_REMOTE_TEMPLATE_IHM_H
 #include "Config/config.h"
@@ -11,7 +7,7 @@
 
 class IHM {
 public:
-    explicit IHM(); //BLEManager &ble, RAMManager &ram
+    explicit IHM();
     ~IHM() = default;
 
     bool init();

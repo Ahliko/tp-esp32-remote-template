@@ -18,9 +18,6 @@
 #include <Arduino.h>
 #include <cstdint>
 
-// ─────────────────────────────────────────────
-//  Notes (fréquences en Hz — octave 4)
-// ─────────────────────────────────────────────
 namespace Note {
     constexpr uint32_t SILENCE = 0;
     constexpr uint32_t C4 = 262;
@@ -55,9 +52,6 @@ namespace Note {
     constexpr uint32_t CLICK = 3000;
 } // namespace Note
 
-// ─────────────────────────────────────────────
-//  Structure d'une note de mélodie
-// ─────────────────────────────────────────────
 struct MelodyNote {
     uint32_t freq_hz; ///< Fréquence (0 = silence)
     uint32_t dur_ms; ///< Durée totale de la note
@@ -71,9 +65,6 @@ struct Melody {
     uint8_t repeat; ///< 0 = une seule fois
 };
 
-// ─────────────────────────────────────────────
-//  Mélodies prédéfinies
-// ─────────────────────────────────────────────
 extern const Melody MELODY_STARTUP;
 extern const Melody MELODY_SUCCESS;
 extern const Melody MELODY_ERROR;
@@ -81,9 +72,6 @@ extern const Melody MELODY_ALARM;
 extern const Melody MELODY_CLICK;
 extern const Melody MELODY_DOUBLE_BEEP;
 
-// ─────────────────────────────────────────────
-//  Classe Buzzer
-// ─────────────────────────────────────────────
 class Buzzer {
 public:
     /**
@@ -98,7 +86,6 @@ public:
     /** Initialise le GPIO / LEDC. Appeler dans setup(). */
     void init() const;
 
-    // ── API tone/noTone (compatible Arduino) ─
     /**
      * @brief Joue une tonalité continue
      * @param freq_hz Fréquence en Hz (ignorée si buzzer actif)
@@ -108,7 +95,6 @@ public:
     /** Arrête la tonalité */
     void noTone();
 
-    // ── Beep non-bloquant ────────────────────
     /**
      * @brief Joue un beep non-bloquant
      * @param freq_hz  Fréquence Hz
@@ -125,7 +111,6 @@ public:
      */
     void beepN(uint8_t times, uint32_t freq_hz = Note::BEEP_STD, uint32_t dur_ms = 100, uint32_t gap_ms = 100);
 
-    // ── Mélodies ─────────────────────────────
     void play(const Melody &melody);
 
     void playStartup() { play(MELODY_STARTUP); }
@@ -149,14 +134,12 @@ public:
      */
     bool update();
 
-    // ── Volume (buzzer passif) ───────────────
     /**
      * @brief Définit le rapport cyclique PWM (volume apparent)
      * @param duty 0–100 (%)
      */
     void setVolume(uint8_t duty_pct);
 
-    // ── État ────────────────────────────────
     bool isPlaying() const { return _playing; }
 
     bool isActive() const { return _active; }
@@ -167,19 +150,17 @@ private:
     uint8_t _pin;
     uint8_t _channel;
     bool _passive;
-    uint8_t _volume{50}; ///< duty % (50 = onde carrée pur)
+    uint8_t _volume{50};
     bool _active{false};
     bool _playing{false};
     uint32_t _currentFreq{0};
 
-    // Séquence courante
     const Melody *_melody{nullptr};
     uint8_t _noteIndex{0};
     uint8_t _repeatCount{0};
     uint32_t _lastTime{0};
     bool _inGap{false};
 
-    // Beep simple / beepN
     bool _simpleBeep{false};
     uint32_t _beepDur{0};
     uint32_t _beepGap{0};
@@ -187,7 +168,6 @@ private:
     uint8_t _beepCount{0};
     uint32_t _beepFreq{0};
 
-    // Alarme bitonale continue
     bool _alarm{false};
     uint32_t _alarmPhase{0};
     uint32_t _alarmLastTime{0};

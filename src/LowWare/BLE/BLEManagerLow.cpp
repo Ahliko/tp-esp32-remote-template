@@ -1,7 +1,6 @@
 #include "BLEManagerLow.h"
 #include <Arduino.h>
 
-
 BLEManagerLow::BLEManagerLow() : _server(nullptr), _isConnected(false) {
     _currentConfig = { LimitConfig(), false };
 }
@@ -13,11 +12,8 @@ void BLEManagerLow::init(const std::string& deviceName) {
 
     BLEService* pService = _server->createService(SERVICE_UUID);
 
-    // Initialisation identique à votre fichier...
     _charCurrent = pService->createCharacteristic(CHAR_CURRENT_UUID, BLECharacteristic::PROPERTY_READ | BLECharacteristic::PROPERTY_NOTIFY);
     _charCurrent->addDescriptor(new BLE2902());
-
-    // ... (Instanciez les autres caractéristiques de télémétrie ici) ...
 
     _charCfgMaxCurrent = pService->createCharacteristic(CHAR_CFG_MAX_CURRENT_UUID, BLECharacteristic::PROPERTY_READ | BLECharacteristic::PROPERTY_WRITE);
     _charCfgMaxTempPcb = pService->createCharacteristic(CHAR_CFG_MAX_TEMP_PCB_UUID, BLECharacteristic::PROPERTY_READ | BLECharacteristic::PROPERTY_WRITE);
@@ -39,16 +35,13 @@ void BLEManagerLow::init(const std::string& deviceName) {
 void BLEManagerLow::updateTelemetry(float current, float pcbTemp, float ambTemp1, float ambTemp2, uint32_t alarmStatus) {
     setFloatValue(_charCurrent, current);
     setFloatValue(_charPcbTemp, pcbTemp);
-    // ...
     if (_isConnected) {
         _charCurrent->notify();
         _charPcbTemp->notify();
-        // ...
     }
 }
 
 void BLEManagerLow::updateLogs(const std::string& logMessage) {
-    // ...
 }
 
 AppConfig BLEManagerLow::getConfig() const { return _currentConfig; }

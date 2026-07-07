@@ -3,7 +3,6 @@
 #include <string>
 #include "Config/config.h"
 
-// Structure de retour pour la configuration
 struct AppConfig {
     LimitConfig config;
     bool isUpdated;

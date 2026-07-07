@@ -1,9 +1,5 @@
 #include "Buzzer.h"
 
-// ─────────────────────────────────────────────────────────────────────────────
-//  Mélodies prédéfinies
-// ─────────────────────────────────────────────────────────────────────────────
-
 static const MelodyNote _startupNotes[] = {
         {Note::C5, 80, 10},
         {Note::E5, 80, 10},
@@ -31,7 +27,7 @@ static const MelodyNote _alarmNotes[] = {
         {Note::ALARM_HIGH, 500, 10},
         {Note::ALARM_LOW, 500, 10},
 };
-const Melody MELODY_ALARM = {_alarmNotes, 2, 0}; // repeat via playAlarm()
+const Melody MELODY_ALARM = {_alarmNotes, 2, 0};
 
 static const MelodyNote _clickNote[] = {
         {Note::CLICK, 15, 0},
@@ -43,10 +39,6 @@ static const MelodyNote _doubleBeepNotes[] = {
         {Note::BEEP_STD, 100, 0},
 };
 const Melody MELODY_DOUBLE_BEEP = {_doubleBeepNotes, 2, 0};
-
-// ─────────────────────────────────────────────────────────────────────────────
-//  Constructeur & begin
-// ─────────────────────────────────────────────────────────────────────────────
 
 Buzzer::Buzzer(uint8_t pin, uint8_t channel, bool passive) : _pin(pin), _channel(channel % 8), _passive(passive) {}
 
@@ -61,17 +53,9 @@ void Buzzer::init() const {
     }
 }
 
-// ─────────────────────────────────────────────────────────────────────────────
-//  tone / noTone
-// ─────────────────────────────────────────────────────────────────────────────
-
 void Buzzer::tone(uint32_t freq_hz) { _startFreq(freq_hz); }
 
 void Buzzer::noTone() { _stopFreq(); }
-
-// ─────────────────────────────────────────────────────────────────────────────
-//  Beep simple / beepN non-bloquants
-// ─────────────────────────────────────────────────────────────────────────────
 
 void Buzzer::beep(uint32_t freq_hz, uint32_t dur_ms) { beepN(1, freq_hz, dur_ms, 0); }
 
@@ -90,10 +74,6 @@ void Buzzer::beepN(uint8_t times, uint32_t freq_hz, uint32_t dur_ms, uint32_t ga
     _lastTime = millis();
     _startFreq(freq_hz);
 }
-
-// ─────────────────────────────────────────────────────────────────────────────
-//  Mélodies
-// ─────────────────────────────────────────────────────────────────────────────
 
 void Buzzer::play(const Melody &melody) {
     stop();
@@ -125,10 +105,6 @@ void Buzzer::stop() {
     _stopFreq();
 }
 
-// ─────────────────────────────────────────────────────────────────────────────
-//  setVolume
-// ─────────────────────────────────────────────────────────────────────────────
-
 void Buzzer::setVolume(uint8_t duty_pct) {
     _volume = constrain(duty_pct, 1, 99);
     if (_active && _passive) {
@@ -136,17 +112,12 @@ void Buzzer::setVolume(uint8_t duty_pct) {
     }
 }
 
-// ─────────────────────────────────────────────────────────────────────────────
-//  update() — à appeler dans loop()
-// ─────────────────────────────────────────────────────────────────────────────
-
 bool Buzzer::update() {
     if (!_playing)
         return false;
     bool changed = false;
     uint32_t now = millis();
 
-    // ── Alarme bitonale ──────────────────────────────────────────────────────
     if (_alarm) {
         if (now - _alarmLastTime >= 500) {
             _alarmPhase = _alarmPhase == 0 ? 1 : 0;
@@ -157,7 +128,6 @@ bool Buzzer::update() {
         return changed;
     }
 
-    // ── Beep simple ──────────────────────────────────────────────────────────
     if (_simpleBeep) {
         uint32_t elapsed = now - _lastTime;
         if (!_inGap && elapsed >= _beepDur) {
@@ -174,7 +144,6 @@ bool Buzzer::update() {
                 _inGap = true;
                 _lastTime = now;
             } else {
-                // pas de gap → enchaîner
                 _startFreq(_beepFreq);
                 _lastTime = now;
             }
@@ -194,7 +163,6 @@ bool Buzzer::update() {
         return changed;
     }
 
-    // ── Mélodie ──────────────────────────────────────────────────────────────
     if (_melody) {
         const MelodyNote &note = _melody->notes[_noteIndex];
         uint32_t elapsed = now - _lastTime;
@@ -232,10 +200,6 @@ bool Buzzer::update() {
     return changed;
 }
 
-// ─────────────────────────────────────────────────────────────────────────────
-//  Privé
-// ─────────────────────────────────────────────────────────────────────────────
-
 void Buzzer::_startFreq(uint32_t freq_hz) {
     _currentFreq = freq_hz;
     if (_passive) {
@@ -262,6 +226,5 @@ void Buzzer::_stopFreq() {
 }
 
 uint32_t Buzzer::_dutyValue() const {
-    // 10-bit PWM → 1023 max; volume 50% → duty carré pur
     return static_cast<uint32_t>(_volume * 1023 / 100);
 }

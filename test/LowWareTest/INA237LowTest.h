@@ -7,12 +7,12 @@ public:
     mutable std::map<uint8_t, uint16_t> registers;
 
     INA237LowTest() {
-        registers[0x3E] = 0x5449; // MANUFACTURER_ID
-        registers[0x04] = 0x0000; // VSHUNT = 0
-        registers[0x05] = 0x0000; // VBUS = 0
-        registers[0x06] = 0x0000; // DIETEMP = 0
-        registers[0x07] = 0x0000; // CURRENT = 0
-        registers[0x08] = 0x0000; // POWER = 0
+        registers[0x3E] = 0x5449;
+        registers[0x04] = 0x0000;
+        registers[0x05] = 0x0000;
+        registers[0x06] = 0x0000;
+        registers[0x07] = 0x0000;
+        registers[0x08] = 0x0000;
     }
 
     bool initBus() const override { return true; }
@@ -25,9 +25,8 @@ public:
         registers[reg] = value;
     }
 
-    void delayMs(uint32_t) const override { /* Rien en test */ }
-    
-    // Utilitaires de simulation
+    void delayMs(uint32_t) const override {}
+
     void simulateBusVoltageRaw(uint16_t raw) { registers[0x05] = raw; }
     void simulateCurrentRaw(uint16_t raw) { registers[0x07] = raw; }
     void simulateTemperatureRaw(uint16_t raw) { registers[0x06] = raw; }

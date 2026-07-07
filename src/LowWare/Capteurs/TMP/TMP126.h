@@ -4,9 +4,6 @@
 
 #include "Interface/TMP126Transport.h"
 
-// ─────────────────────────────────────────────
-// Adresses des registres
-// ─────────────────────────────────────────────
 namespace TMP126Reg {
     constexpr uint8_t TEMP_RESULT  = 0x00; ///< Résultat température (RO)
     constexpr uint8_t ALERT_STATUS = 0x01; ///< Statuts alertes (R/clear)
@@ -19,9 +16,6 @@ namespace TMP126Reg {
     constexpr uint8_t DEVICE_ID    = 0x0C; ///< ID device (RO)
 }
 
-// ─────────────────────────────────────────────
-// Bits du registre CONFIG
-// ─────────────────────────────────────────────
 namespace TMP126Config {
     constexpr uint16_t MODE_CONTINUOUS = 0u << 10;
     constexpr uint16_t MODE_SHUTDOWN   = 1u << 10;
@@ -76,12 +70,8 @@ struct TMP126AlertStatus {
 static constexpr float TMP126_LSB_DEG = 0.03125f;
 static constexpr uint16_t TMP126_DEVICE_ID_EXPECTED = 0x1126;
 
-// ─────────────────────────────────────────────
-// Classe principale
-// ─────────────────────────────────────────────
 class TMP126 {
 public:
-    // Injection du transport
     explicit TMP126(TMP126Transport& transport);
     ~TMP126() = default;
 
