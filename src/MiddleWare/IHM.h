@@ -1,12 +1,8 @@
-//
-// Created by Ahliko on 01/07/2026.
-//
-
 #ifndef TP_ESP32_REMOTE_TEMPLATE_IHM_H
 #define TP_ESP32_REMOTE_TEMPLATE_IHM_H
 #include "Config/config.h"
 #include "Logging.h"
-#include "LowWare/BLE/BluetoothManager.h"
+#include "LowWare/BLE/BLEManagerLow.h"
 #include "LowWare/IHM/Buzzer.h"
 #include "LowWare/IHM/LED.h"
 
@@ -17,6 +13,7 @@ public:
 
     bool init();
     void update(float &voltage, float &current, float &tempPcb, float &tempAmb1, float &tempAmb2);
+
 private:
     void checkValues(float &voltage, float &current, float &tempPcb, float &tempAmb1, float &tempAmb2);
     void displayAndSendValues();
@@ -30,7 +27,7 @@ private:
     Buzzer *m_buzzer;
     LED *m_red_led;
     LED *m_green_led;
-    BLEManager *m_bleManager;
+    BLEManagerLow *m_bleManager;
     LimitConfig m_config;
     bool m_isAlert = false;
     Logging& m_logger;

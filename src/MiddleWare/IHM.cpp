@@ -1,16 +1,12 @@
-//
-// Created by Ahliko on 01/07/2026.
-//
-
 #include "IHM.h"
 
-#include "LowWare/BLE/BluetoothManager.h"
+#include "LowWare/BLE/BLEManagerLow.h"
 
 IHM::IHM(Logging& logger) : m_logger(logger) {
     m_buzzer = new Buzzer(BUZZER_PIN);
     m_green_led = new LED(LED_GREEN_PIN);
     m_red_led = new LED(LED_RED_PIN);
-    m_bleManager = new BLEManager();
+    m_bleManager = new BLEManagerLow();
     m_config = LimitConfig();
 }
 
@@ -51,7 +47,8 @@ void IHM::checkValues(float &voltage, float &current, float &tempPcb, float &tem
 
     if (m_config.temp_pcb_limit_low > tempPcb || tempPcb > m_config.temp_pcb_limit_high) {
         Serial.println("ALERT on TempPCB");
-        Serial.printf("low : %f, high : %f, temp : %f\n", m_config.temp_pcb_limit_low, m_config.temp_pcb_limit_high, tempPcb);
+        Serial.printf("low : %f, high : %f, temp : %f\n", m_config.temp_pcb_limit_low, m_config.temp_pcb_limit_high,
+                      tempPcb);
         m_logger.logAlarm(now, "Alerte Température PCB", tempPcb);
         displayAlert();
         return;
@@ -60,7 +57,8 @@ void IHM::checkValues(float &voltage, float &current, float &tempPcb, float &tem
     if (m_config.temp_amb_limit_low > tempAmb1 || tempAmb1 > m_config.temp_amb_limit_high) {
         Serial.println("ALERT on TempAMB1");
         Serial.printf("low : %f, high : %f, temp : %f\n", m_config.temp_amb_limit_low, m_config.temp_amb_limit_high, tempAmb1);
-        m_logger.logAlarm(now, "Alerte Température AMB1", tempAmb1);
+        m_logger.logAlarm(now, "Alerte Température AMB1",
+                      tempAmb1);
         displayAlert();
         return;
     }
@@ -68,7 +66,8 @@ void IHM::checkValues(float &voltage, float &current, float &tempPcb, float &tem
     if (m_config.temp_amb_limit_low > tempAmb2 || tempAmb2 > m_config.temp_amb_limit_high) {
         Serial.println("ALERT on TempAMB2");
         Serial.printf("low : %f, high : %f, temp : %f\n", m_config.temp_amb_limit_low, m_config.temp_amb_limit_high, tempAmb2);
-        m_logger.logAlarm(now, "Alerte Température AMB2", tempAmb2);
+        m_logger.logAlarm(now, "Alerte Température AMB2",
+                      tempAmb2);
         displayAlert();
         return;
     }

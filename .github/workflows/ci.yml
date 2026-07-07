@@ -1,0 +1,43 @@
+name: CI - PlatformIO Native Tests
+
+# Déclenche la pipeline à chaque push ou pull request sur la branche main/master
+on:
+  push:
+    branches: [ "main", "dev" ]
+  pull_request:
+    branches: [ "main", "dev" ]
+
+jobs:
+  test-native:
+    name: Run Unit Tests (Native)
+    runs-on: ubuntu-latest
+
+    steps:
+      # 1. Récupère le code source de votre dépôt
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      # 2. Installe Python (nécessaire pour exécuter PlatformIO Core)
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      # 3. Met en cache les paquets PlatformIO pour accélérer les futurs lancements
+      - name: Cache PlatformIO packages
+        uses: actions/cache@v4
+        with:
+          path: ~/.platformio
+          key: ${{ runner.os }}-pio-${{ hashFiles('**/platformio.ini') }}
+          restore-keys: |
+            ${{ runner.os }}-pio-
+
+      # 4. Installe PlatformIO
+      - name: Install PlatformIO
+        run: |
+          python -m pip install --upgrade pip
+          pip install platformio
+
+      # 5. Lance vos tests unitaires natifs (GoogleTest)
+      - name: Run Native Tests
+        run: pio test -e native

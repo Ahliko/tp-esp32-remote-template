@@ -1,6 +1,6 @@
 #include <Arduino.h>
 
-#include "LowWare/BLE/BluetoothManager.h"
+#include "LowWare/BLE/BLEManagerLow.h"
 #include "LowWare/PSRAM/PSRAM.h"
 #include "MiddleWare/IHM.h"
 #include "MiddleWare/Logging.h"
@@ -10,7 +10,6 @@ PSRAM systemRam(512 * 1024);
 Logging systemLogger(systemRam);
 Sensors sensors;
 IHM ihm(systemLogger);
-BLEManager bleManager;
 
 float voltage;
 float current;
@@ -23,7 +22,8 @@ void setup() {
     delay(1000);
     Serial.println("BOOT OK");
 
-    if (!sensors.init()) return;
+    if (!sensors.init())
+        return;
     (void) ihm.init();
 }
 
