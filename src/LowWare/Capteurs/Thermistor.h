@@ -6,18 +6,15 @@ class Thermistor {
 public:
     /**
      * @brief Constructeur pour une thermistance NTC
-     * 
+     *
      * @param pin Broche ADC de l'ESP32
      * @param seriesResistor Résistance du pont diviseur (ex: 10000.0 pour 10k)
      * @param nominalResistor Résistance de la thermistance à 25°C (ex: 10000.0)
      * @param betaValue Valeur Beta de la thermistance (ex: 3950.0)
      * @param thermistorToGround True si la thermistance est reliée au GND, False si elle est reliée au VCC
      */
-    explicit Thermistor(uint8_t pin, 
-                       float seriesResistor = 10000.0f, 
-                       float nominalResistor = 10000.0f, 
-                       float betaValue = 3950.0f,
-                       bool thermistorToGround = true);
+    explicit Thermistor(uint8_t pin, float seriesResistor = 10000.0f, float nominalResistor = 10000.0f,
+                        float betaValue = 3950.0f, bool thermistorToGround = true);
 
     ~Thermistor() = default;
 

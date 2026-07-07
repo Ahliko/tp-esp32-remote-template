@@ -18,7 +18,7 @@ bool INA237::init(const ADCRange range) {
     }
 
     reset();
-    _transport.delayMs(2); // attente stabilisation
+    _transport.delayMs(2);
 
     uint16_t cfg = 0;
     if (range == ADCRange::RANGE_40_96mV)
@@ -42,9 +42,6 @@ void INA237::setMode(OperatingMode mode) const {
     reg = (reg & 0x0FFF) | (static_cast<uint16_t>(mode) << 12);
     _transport.writeReg(INA237Reg::ADC_CONFIG, reg);
 }
-
-// ... Même logique d'opérations bit à bit pour les autres setters (setShuntConvTime, etc.)
-// En remplaçant readReg/writeReg internes par _transport.readReg / _transport.writeReg
 
 float INA237::readShuntVoltage() const {
     const auto raw = static_cast<int16_t>(_transport.readReg(INA237Reg::VSHUNT));

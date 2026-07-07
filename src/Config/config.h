@@ -1,7 +1,3 @@
-//
-// Created by Ahliko on 01/07/2026.
-//
-
 #ifndef TP_ESP32_REMOTE_TEMPLATE_CONFIG_H
 #define TP_ESP32_REMOTE_TEMPLATE_CONFIG_H
 
@@ -42,7 +38,6 @@
 #define TEMP_PCB_LIMIT_HIGH 75
 #define TEMP_AMB_LIMIT_LOW 0
 #define TEMP_AMB_LIMIT_HIGH 75
-
 
 struct LimitConfig {
     float voltage_limit_low = VOLTAGE_LIMIT_LOW;

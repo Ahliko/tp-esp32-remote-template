@@ -1,6 +1,6 @@
 #pragma once
-#include <SPI.h>
 #include <Arduino.h>
+#include <SPI.h>
 #include "Interface/TMP126Transport.h"
 
 class TMP126Low : public TMP126Transport {
@@ -16,7 +16,7 @@ public:
     void delayUs(uint32_t us) const override;
 
 private:
-    SPIClass* _spi;
+    SPIClass *_spi;
     uint8_t _csPin;
     SPISettings _spiSettings;
 

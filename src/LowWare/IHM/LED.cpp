@@ -8,10 +8,6 @@ void LED::init() {
     _state = false;
 }
 
-// ─────────────────────────────────────────────────────────────────────────────
-//  Contrôle de base
-// ─────────────────────────────────────────────────────────────────────────────
-
 void LED::on() {
     _running = false;
     _writeState(true);
@@ -45,20 +41,14 @@ void LED::startBlink(uint32_t on_ms, uint32_t off_ms, uint8_t times) {
     _writeState(false);
 }
 
-
 void LED::stop() {
     _running = false;
     _writeState(false);
 }
 
-// ─────────────────────────────────────────────────────────────────────────────
-//  update() — à appeler dans loop()
-// ─────────────────────────────────────────────────────────────────────────────
-
 bool LED::update() {
     bool changed = false;
 
-    // ── Blink / Pattern ─────────────────────────────────────────────────────
     if (!_running)
         return changed;
 
@@ -70,20 +60,16 @@ bool LED::update() {
     offMs = _blinkOffMs;
 
     if (!_inOnPhase && elapsed >= offMs) {
-        // → ON
         _inOnPhase = true;
         _lastTime = now;
         _writeState(true);
         changed = true;
     } else if (_inOnPhase && elapsed >= onMs) {
-        // → OFF
         _inOnPhase = false;
         _lastTime = now;
         _writeState(false);
         changed = true;
 
-        // Avancer step si pattern
-        // Blink simple
         if (_blinkTimes != 0) {
             _blinkCount++;
             if (_blinkCount >= _blinkTimes) {
@@ -94,10 +80,6 @@ bool LED::update() {
 
     return changed;
 }
-
-// ─────────────────────────────────────────────────────────────────────────────
-//  Privé
-// ─────────────────────────────────────────────────────────────────────────────
 
 void LED::_writeState(bool on) {
     _state = on;

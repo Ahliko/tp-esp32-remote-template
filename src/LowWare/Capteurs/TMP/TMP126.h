@@ -4,63 +4,57 @@
 
 #include "Interface/TMP126Transport.h"
 
-// ─────────────────────────────────────────────
-// Adresses des registres
-// ─────────────────────────────────────────────
 namespace TMP126Reg {
-    constexpr uint8_t TEMP_RESULT  = 0x00; ///< Résultat température (RO)
+    constexpr uint8_t TEMP_RESULT = 0x00; ///< Résultat température (RO)
     constexpr uint8_t ALERT_STATUS = 0x01; ///< Statuts alertes (R/clear)
-    constexpr uint8_t CONFIG       = 0x03; ///< Configuration
-    constexpr uint8_t THIGH_LIMIT  = 0x04; ///< Limite haute température
-    constexpr uint8_t TLOW_LIMIT   = 0x05; ///< Limite basse température
-    constexpr uint8_t HYSTERESIS   = 0x06; ///< Hystérésis
-    constexpr uint8_t SLEW_LIMIT   = 0x07; ///< Limite slew rate
+    constexpr uint8_t CONFIG = 0x03; ///< Configuration
+    constexpr uint8_t THIGH_LIMIT = 0x04; ///< Limite haute température
+    constexpr uint8_t TLOW_LIMIT = 0x05; ///< Limite basse température
+    constexpr uint8_t HYSTERESIS = 0x06; ///< Hystérésis
+    constexpr uint8_t SLEW_LIMIT = 0x07; ///< Limite slew rate
     constexpr uint8_t ALERT_ENABLE = 0x08; ///< Activation des alertes
-    constexpr uint8_t DEVICE_ID    = 0x0C; ///< ID device (RO)
-}
+    constexpr uint8_t DEVICE_ID = 0x0C; ///< ID device (RO)
+} // namespace TMP126Reg
 
-// ─────────────────────────────────────────────
-// Bits du registre CONFIG
-// ─────────────────────────────────────────────
 namespace TMP126Config {
     constexpr uint16_t MODE_CONTINUOUS = 0u << 10;
-    constexpr uint16_t MODE_SHUTDOWN   = 1u << 10;
-    constexpr uint16_t ONE_SHOT        = 1u << 9;
-    constexpr uint16_t CONV_31MS       = 0u << 6;
-    constexpr uint16_t CONV_62MS       = 1u << 6;
-    constexpr uint16_t CONV_125MS      = 2u << 6;
-    constexpr uint16_t CONV_250MS      = 3u << 6;
-    constexpr uint16_t CONV_500MS      = 4u << 6;
-    constexpr uint16_t CONV_1S         = 5u << 6;
-    constexpr uint16_t CONV_4S         = 6u << 6;
-    constexpr uint16_t CONV_16S        = 7u << 6;
-    constexpr uint16_t AVG_1           = 0u << 4;
-    constexpr uint16_t AVG_8           = 1u << 4;
-    constexpr uint16_t AVG_32          = 2u << 4;
-    constexpr uint16_t AVG_64          = 3u << 4;
-    constexpr uint16_t INT_MODE        = 0u << 3;
-    constexpr uint16_t COMP_MODE       = 1u << 3;
-    constexpr uint16_t DATA_READY_EN   = 1u << 2;
-    constexpr uint16_t ALERT_POL_HIGH  = 1u << 1;
-    constexpr uint16_t SOFT_RESET      = 1u << 0;
-}
+    constexpr uint16_t MODE_SHUTDOWN = 1u << 10;
+    constexpr uint16_t ONE_SHOT = 1u << 9;
+    constexpr uint16_t CONV_31MS = 0u << 6;
+    constexpr uint16_t CONV_62MS = 1u << 6;
+    constexpr uint16_t CONV_125MS = 2u << 6;
+    constexpr uint16_t CONV_250MS = 3u << 6;
+    constexpr uint16_t CONV_500MS = 4u << 6;
+    constexpr uint16_t CONV_1S = 5u << 6;
+    constexpr uint16_t CONV_4S = 6u << 6;
+    constexpr uint16_t CONV_16S = 7u << 6;
+    constexpr uint16_t AVG_1 = 0u << 4;
+    constexpr uint16_t AVG_8 = 1u << 4;
+    constexpr uint16_t AVG_32 = 2u << 4;
+    constexpr uint16_t AVG_64 = 3u << 4;
+    constexpr uint16_t INT_MODE = 0u << 3;
+    constexpr uint16_t COMP_MODE = 1u << 3;
+    constexpr uint16_t DATA_READY_EN = 1u << 2;
+    constexpr uint16_t ALERT_POL_HIGH = 1u << 1;
+    constexpr uint16_t SOFT_RESET = 1u << 0;
+} // namespace TMP126Config
 
 namespace TMP126Alert {
-    constexpr uint16_t CRC_FLAG     = 1u << 8;
-    constexpr uint16_t SLEW_FLAG    = 1u << 5;
-    constexpr uint16_t SLEW_STATUS  = 1u << 4;
-    constexpr uint16_t THIGH_FLAG   = 1u << 3;
+    constexpr uint16_t CRC_FLAG = 1u << 8;
+    constexpr uint16_t SLEW_FLAG = 1u << 5;
+    constexpr uint16_t SLEW_STATUS = 1u << 4;
+    constexpr uint16_t THIGH_FLAG = 1u << 3;
     constexpr uint16_t THIGH_STATUS = 1u << 2;
-    constexpr uint16_t TLOW_FLAG    = 1u << 1;
-    constexpr uint16_t TLOW_STATUS  = 1u << 0;
-    constexpr uint16_t DATA_READY   = 1u << 9;
-}
+    constexpr uint16_t TLOW_FLAG = 1u << 1;
+    constexpr uint16_t TLOW_STATUS = 1u << 0;
+    constexpr uint16_t DATA_READY = 1u << 9;
+} // namespace TMP126Alert
 
 namespace TMP126AlertEn {
-    constexpr uint16_t SLEW_EN  = 1u << 2;
+    constexpr uint16_t SLEW_EN = 1u << 2;
     constexpr uint16_t THIGH_EN = 1u << 1;
-    constexpr uint16_t TLOW_EN  = 1u << 0;
-}
+    constexpr uint16_t TLOW_EN = 1u << 0;
+} // namespace TMP126AlertEn
 
 struct TMP126AlertStatus {
     bool dataReady;
@@ -76,13 +70,9 @@ struct TMP126AlertStatus {
 static constexpr float TMP126_LSB_DEG = 0.03125f;
 static constexpr uint16_t TMP126_DEVICE_ID_EXPECTED = 0x1126;
 
-// ─────────────────────────────────────────────
-// Classe principale
-// ─────────────────────────────────────────────
 class TMP126 {
 public:
-    // Injection du transport
-    explicit TMP126(TMP126Transport& transport);
+    explicit TMP126(TMP126Transport &transport);
     ~TMP126() = default;
 
     bool init() const;
@@ -112,7 +102,7 @@ public:
     static TMP126AlertStatus parseAlertStatus(uint16_t regValue);
 
 private:
-    TMP126Transport& _transport;
+    TMP126Transport &_transport;
 
     uint16_t readReg(uint8_t reg) const;
     void writeReg(uint8_t reg, uint16_t value) const;

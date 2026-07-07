@@ -3,7 +3,6 @@
 
 #include "Interface/INA237Transport.h"
 
-// Vos namespaces INA237Reg et enums (ADCRange, ConvTime, Averaging, OperatingMode) restent ici
 namespace INA237Reg {
     constexpr uint8_t CONFIG = 0x00;
     constexpr uint8_t ADC_CONFIG = 0x01;
@@ -38,14 +37,10 @@ enum class Averaging : uint8_t {
     AVG_512 = 6,
     AVG_1024 = 7
 };
-enum class OperatingMode : uint8_t {
-    SHUTDOWN = 0x0,
-    CONT_ALL = 0xF
-}; // J'ai raccourci pour l'exemple, gardez votre enum complète
+enum class OperatingMode : uint8_t { SHUTDOWN = 0x0, CONT_ALL = 0xF };
 
 class INA237 {
 public:
-    // Injection de la dépendance I2C
     explicit INA237(INA237Transport &transport, float shuntOhms, float maxCurrentA);
     ~INA237() = default;
 
@@ -71,7 +66,6 @@ public:
 
     float getCurrentLSB() const { return _currentLSB; }
 
-    // Rendu public/statique pour vos tests de conversion mathématique
     static uint16_t calcShuntCal(float currentLSB, float shuntOhms, ADCRange range);
 
 private:

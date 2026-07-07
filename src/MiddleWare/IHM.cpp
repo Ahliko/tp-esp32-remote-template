@@ -1,7 +1,3 @@
-//
-// Created by Ahliko on 01/07/2026.
-//
-
 #include "IHM.h"
 
 #include "LowWare/BLE/BLEManagerLow.h"
@@ -47,21 +43,24 @@ void IHM::checkValues(float &voltage, float &current, float &tempPcb, float &tem
 
     if (m_config.temp_pcb_limit_low > tempPcb || tempPcb > m_config.temp_pcb_limit_high) {
         Serial.println("ALERT on TempPCB");
-        Serial.printf("low : %f, high : %f, temp : %f\n", m_config.temp_pcb_limit_low, m_config.temp_pcb_limit_high, tempPcb);
+        Serial.printf("low : %f, high : %f, temp : %f\n", m_config.temp_pcb_limit_low, m_config.temp_pcb_limit_high,
+                      tempPcb);
         displayAlert();
         return;
     }
 
     if (m_config.temp_amb_limit_low > tempAmb1 || tempAmb1 > m_config.temp_amb_limit_high) {
         Serial.println("ALERT on TempAMB1");
-        Serial.printf("low : %f, high : %f, temp : %f\n", m_config.temp_pcb_limit_low, m_config.temp_pcb_limit_high, tempAmb1);
+        Serial.printf("low : %f, high : %f, temp : %f\n", m_config.temp_pcb_limit_low, m_config.temp_pcb_limit_high,
+                      tempAmb1);
         displayAlert();
         return;
     }
 
     if (m_config.temp_amb_limit_low > tempAmb2 || tempAmb2 > m_config.temp_amb_limit_high) {
         Serial.println("ALERT on TempAMB2");
-        Serial.printf("low : %f, high : %f, temp : %f\n", m_config.temp_pcb_limit_low, m_config.temp_pcb_limit_high, tempAmb2);
+        Serial.printf("low : %f, high : %f, temp : %f\n", m_config.temp_pcb_limit_low, m_config.temp_pcb_limit_high,
+                      tempAmb2);
         displayAlert();
         return;
     }
