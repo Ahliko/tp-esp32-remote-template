@@ -6,7 +6,7 @@
 #include "../src/LowWare/Capteurs/TMP/TMP126.h"
 
 // Si vous avez placé TMP126LowTest.h dans le même dossier de test :
-#include "TMP126LowTest.h"
+#include "LowWareTest/TMP126LowTest.h"
 
 // ─────────────────────────────────────────────────────────
 // 1. Tests des fonctions statiques de conversion

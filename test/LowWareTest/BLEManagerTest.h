@@ -1,6 +1,6 @@
 #pragma once
 #include <string>
-#include "../src/Interface/BLEInterface.h"
+#include "../../src/Interface/BLEInterface.h"
 
 class BLEManagerTest : public BLEInterface {
 public:

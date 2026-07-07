@@ -1,5 +1,5 @@
 #include <gtest/gtest.h>
-#include "BLEManagerTest.h"
+#include "LowWareTest/BLEManagerTest.h"
 
 TEST(IHMTest, CheckTelemetryIsSentToBLE) {
     BLEManagerTest mockBle;

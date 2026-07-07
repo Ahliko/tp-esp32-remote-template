@@ -2,7 +2,7 @@
 
 #include "../src/Interface/INA237Transport.h"
 #include "../src/LowWare/Capteurs/INA/INA237.h" // Modifiez selon votre dossier
-#include "INA237LowTest.h"
+#include "LowWareTest/INA237LowTest.h"
 
 TEST(INA237LogicTest, InitializationSuccess) {
     INA237LowTest mockTransport;
